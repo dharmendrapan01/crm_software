@@ -49,6 +49,13 @@ class Datalist {
   String? mdate;
   String? project;
   String? leadQuality;
+  String? direction;
+  String? callstatus;
+  String? nomasked;
+  String? mobileno;
+  String? agentmobile;
+  String? callerid;
+  String? favorite;
 
   Datalist(
       {this.custName,
@@ -56,7 +63,15 @@ class Datalist {
         this.leadId,
         this.mdate,
         this.project,
-        this.leadQuality});
+        this.leadQuality,
+        this.direction,
+        this.callstatus,
+        this.nomasked,
+        this.mobileno,
+        this.agentmobile,
+        this.callerid,
+        this.favorite,
+      });
 
   Datalist.fromJson(Map<String, dynamic> json) {
     custName = json['custName'];
@@ -65,6 +80,13 @@ class Datalist {
     mdate = json['mdate'];
     project = json['project'];
     leadQuality = json['leadQuality'];
+    direction = json['direction'];
+    callstatus = json['callstatus'];
+    nomasked = json['nomasked'];
+    mobileno = json['mobileno'];
+    agentmobile = json['agentmobile'];
+    callerid = json['callerid'];
+    favorite = json['favorite'];
   }
 
   Map<String, dynamic> toJson() {
@@ -75,6 +97,13 @@ class Datalist {
     data['mdate'] = this.mdate;
     data['project'] = this.project;
     data['leadQuality'] = this.leadQuality;
+    data['direction'] = this.direction;
+    data['callstatus'] = this.callstatus;
+    data['nomasked'] = this.nomasked;
+    data['mobileno'] = this.mobileno;
+    data['agentmobile'] = this.agentmobile;
+    data['callerid'] = this.callerid;
+    data['favorite'] = this.favorite;
     return data;
   }
 }

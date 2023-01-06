@@ -10,14 +10,14 @@ import 'modals/cli_number.dart';
 import 'home_page.dart';
 import 'main.dart';
 
-class QualifiedList extends StatefulWidget {
-  const QualifiedList({Key? key}) : super(key: key);
+class FavoriteList extends StatefulWidget {
+  const FavoriteList({Key? key}) : super(key: key);
 
   @override
-  State<QualifiedList> createState() => _QualifiedListState();
+  State<FavoriteList> createState() => _FavoriteListState();
 }
 
-class _QualifiedListState extends State<QualifiedList> {
+class _FavoriteListState extends State<FavoriteList> {
   List<Datalist> result = [];
   List<Clilist> clinumber = [];
   ScrollController scrollController = ScrollController();
@@ -39,16 +39,21 @@ class _QualifiedListState extends State<QualifiedList> {
   }
 
   void getData(userToken, userId, paraPage) async {
+    // print(userId);
+    // print(userToken);
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/qualified-list.php?user_id=$userId&page_no=$page'),
+            'https://spaze-salesapp.com/app/_api/favorite-list.php?user_id=$userId&page_no=$page'),
         headers: headersData);
+    // print(response.body);
     User userClass = User.fromJson(json.decode(response.body));
+    // print(userClass);
     result = result + userClass.datalist!;
+    // print(result);
     int localPage = page + 1;
     setState(() {
       result;
@@ -70,6 +75,7 @@ class _QualifiedListState extends State<QualifiedList> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +84,7 @@ class _QualifiedListState extends State<QualifiedList> {
         child: result.isEmpty ? Center(child: CircularProgressIndicator()) : RefreshIndicator(
           onRefresh: () {
             // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (a,b,c) => MyHomePage()));
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 2,)), (Route<dynamic> route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 1,)), (Route<dynamic> route) => false);
             return Future.value(false);
           },
           child: ListView.builder(
@@ -167,7 +173,7 @@ class _QualifiedListState extends State<QualifiedList> {
                             onTap: () {
                               addFavorite(result[index].leadId, userToken);
                             },
-                            child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
+                            child: Image.asset('assets/images/impclient-active.png', width: 35,height: 35),
                           ),
                           Image.asset(
                             'assets/images/lead-view.png',
@@ -229,7 +235,6 @@ class _QualifiedListState extends State<QualifiedList> {
     var response = await http.post(Uri.parse('https://api-smartflo.tatateleservices.com/v1/click_to_call'), headers: headersData, body: jsonEncode(reqParameter));
     print(response.body);
   }
-
 
   Widget cliSheet(destMobile, leadId) => Column(
     mainAxisSize: MainAxisSize.min,
@@ -309,7 +314,8 @@ class _QualifiedListState extends State<QualifiedList> {
           fontSize: 20.0
       );
     }
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 2,)), (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 1,)), (Route<dynamic> route) => false);
   }
+
 
 }

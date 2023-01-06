@@ -232,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
         await UserPreference.setUserName(loginDataArr['userName']);
 
         Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (BuildContext context) => HomePage()), (
+            MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 0,)), (
             Route<dynamic> route) => false);
       }else{
         showDialog(

@@ -1,5 +1,6 @@
 import 'package:crm_software/home_page.dart';
 import 'package:crm_software/login_page.dart';
+import 'package:crm_software/splash_screen.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,34 +41,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String userToken = '';
-  // String userId = '';
 
   void initState(){
     super.initState();
     userToken = UserPreference.getUserToken() ?? '';
-    // setState(() {
-    //   getUserData();
-    // });
-    // print(userToken);
   }
-
-  // void getUserData() async {
-  //   SharedPreferences preferences = await SharedPreferences.getInstance();
-  //     if(userToken != null || userId != null){
-  //       userToken = preferences.getString('user_token');
-  //       userId = preferences.getString('user_id');
-  //     }else{
-  //       userToken = "";
-  //       userId = "";
-  //     }
-  //     print(userToken);
-  //     // print(userId);
-  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: userToken != '' ? HomePage() : LoginPage(),
+      body: SplashScreen(),
+      // body: userToken != '' ? HomePage(tabIndex: 0,) : LoginPage(),
     );
   }
 

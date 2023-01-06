@@ -10,14 +10,14 @@ import 'modals/cli_number.dart';
 import 'home_page.dart';
 import 'main.dart';
 
-class QualifiedList extends StatefulWidget {
-  const QualifiedList({Key? key}) : super(key: key);
+class WebsiteRecCall extends StatefulWidget {
+  const WebsiteRecCall({Key? key}) : super(key: key);
 
   @override
-  State<QualifiedList> createState() => _QualifiedListState();
+  State<WebsiteRecCall> createState() => _WebsiteRecCallState();
 }
 
-class _QualifiedListState extends State<QualifiedList> {
+class _WebsiteRecCallState extends State<WebsiteRecCall> {
   List<Datalist> result = [];
   List<Clilist> clinumber = [];
   ScrollController scrollController = ScrollController();
@@ -45,7 +45,7 @@ class _QualifiedListState extends State<QualifiedList> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/qualified-list.php?user_id=$userId&page_no=$page'),
+            'https://spaze-salesapp.com/app/_api/website_call.php?user_id=$userId&page_no=$page'),
         headers: headersData);
     User userClass = User.fromJson(json.decode(response.body));
     result = result + userClass.datalist!;
@@ -70,6 +70,7 @@ class _QualifiedListState extends State<QualifiedList> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +79,7 @@ class _QualifiedListState extends State<QualifiedList> {
         child: result.isEmpty ? Center(child: CircularProgressIndicator()) : RefreshIndicator(
           onRefresh: () {
             // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (a,b,c) => MyHomePage()));
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 2,)), (Route<dynamic> route) => false);
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 3,)), (Route<dynamic> route) => false);
             return Future.value(false);
           },
           child: ListView.builder(
@@ -108,7 +109,7 @@ class _QualifiedListState extends State<QualifiedList> {
                           );
                         },
                         child: ListTile(
-                          leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
+                          leading: Icon(Icons.call_received, color: Colors.green),
                           title: Text(
                             '${result[index].custName}  (${result[index].leadId})',
                             style: TextStyle(
@@ -309,7 +310,7 @@ class _QualifiedListState extends State<QualifiedList> {
           fontSize: 20.0
       );
     }
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 2,)), (Route<dynamic> route) => false);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 3,)), (Route<dynamic> route) => false);
   }
 
 }

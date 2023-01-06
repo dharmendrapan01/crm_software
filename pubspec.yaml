@@ -39,10 +39,19 @@ dependencies:
   http: ^0.13.5
   shared_preferences: ^2.0.15
   hexcolor: ^3.0.1
+  fluttertoast: ^8.1.2
+  intl: ^0.18.0
+  just_audio: ^0.9.31
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app-icon.png"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
