@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:crm_software/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -21,42 +22,47 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<ScaffoldState> _scaffoldkey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldkey,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-              colors: [
-                Colors.pink,
-                Colors.pink
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              margin: const EdgeInsets.only(left: 5, right: 5),
-              height: 520,
-              width: double.infinity,
-              child: ListView(
-                children: [
-                  headerSection(),
-                  textSection(),
-                  formSection(),
-                  buttonSection(),
-                  footerSection(),
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+        key: _scaffoldkey,
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                colors: [
+                  Colors.pink,
+                  Colors.pink
                 ],
-              ),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                color: HexColor('#efefef'),
-              ),
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter
             ),
-          ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(left: 5, right: 5),
+                height: 520,
+                width: double.infinity,
+                child: ListView(
+                  children: [
+                    headerSection(),
+                    textSection(),
+                    formSection(),
+                    buttonSection(),
+                    footerSection(),
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  color: HexColor('#efefef'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -164,10 +170,10 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: ElevatedButton(
         onPressed: () {
-          if(formKey.currentState!.validate()){
-            SignIn();
-          }
-        },
+        if(formKey.currentState!.validate()){
+          SignIn();
+        }
+      },
         child: Text('Sign In'.toUpperCase(), style: TextStyle(color: Colors.white),),
         style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
@@ -212,21 +218,7 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200) {
       Navigator.pop(context);
       var loginDataArr = jsonDecode(response.body);
-      // return loginDataArr;
       if(loginDataArr['lstatus'] == '1'){
-        // String userTocken = loginDataArr['jwt'];
-        // userId = loginDataArr['userId'];
-        // String username = loginDataArr['userName'];
-
-        // SharedPreferences preferences = await SharedPreferences.getInstance();
-        // await preferences.setString('user_token', loginDataArr['jwt']);
-        // await preferences.setString('user_id', loginDataArr['userId']);
-        // await preferences.setString('user_name', loginDataArr['userName']);
-
-        // print(userId);
-
-        // print(loginDataArr['jwt']);
-
         await UserPreference.setUserToken(loginDataArr['jwt']);
         await UserPreference.setUserId(loginDataArr['userId']);
         await UserPreference.setUserName(loginDataArr['userName']);
@@ -235,25 +227,41 @@ class _LoginPageState extends State<LoginPage> {
             MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 0,)), (
             Route<dynamic> route) => false);
       }else{
-        showDialog(
-          context: context,
-          builder: (context){
-            return AlertDialog(
-              content: Text('Wrong email or password'),
-            );
-          },
+        Fluttertoast.showToast(
+            msg: 'Wrong Email Or Password',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 20.0
         );
+        // showDialog(
+        //   context: context,
+        //   builder: (context){
+        //     return AlertDialog(
+        //       content: Text('Wrong email or password'),
+        //     );
+        //   },
+        // );
       }
     } else {
-      Navigator.pop(context);
-      showDialog(
-        context: context,
-        builder: (context){
-          return AlertDialog(
-            content: Text('Incorrect api url'),
-          );
-        },
+      Fluttertoast.showToast(
+          msg: 'Incorrect api url',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 20.0
       );
+      // Navigator.pop(context);
+      // showDialog(
+      //   context: context,
+      //   builder: (context){
+      //     return AlertDialog(
+      //       content: Text('Incorrect api url'),
+      //     );
+      //   },
+      // );
     }
 
   }

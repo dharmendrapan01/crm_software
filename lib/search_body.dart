@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:crm_software/search_screen.dart';
 import 'package:crm_software/user_preference.dart';
+import 'package:crm_software/widgets/lead_update.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'home_page.dart';
 import 'package:crm_software/modals/cli_number.dart';
 import 'lead_view.dart';
 import 'modals/search_modal.dart';
@@ -41,7 +41,9 @@ class _SearchBodyState extends State<SearchBody> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        height: double.maxFinite,
           child: result.isEmpty ? Center(child: CircularProgressIndicator()) : ListView.builder(
+            padding: EdgeInsets.all(0.0),
             physics: BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: result.length,
@@ -116,10 +118,20 @@ class _SearchBodyState extends State<SearchBody> {
                             },
                             child: Image.asset('assets/images/view.png', width: 40, height: 40,),
                           ),
-                          Image.asset(
-                            'assets/images/plus.png',
-                            width: 40,
-                            height: 40,
+                          InkWell(
+                            onTap: (){
+                              showModalBottomSheet(
+                                enableDrag: false,
+                                isDismissible: false,
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                ),
+                                context: context,
+                                builder: (context) => LeadUpdate(leadId: result[index].leadId),
+                              );
+                            },
+                            child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
                           ),
                           InkWell(
                             onTap: () {
@@ -182,21 +194,9 @@ class _SearchBodyState extends State<SearchBody> {
         headers: headersData);
     Search userClass = Search.fromJson(json.decode(response.body));
     result = result + userClass.datalist!;
-    // print(result);
-    if(result.isEmpty){
-      Fluttertoast.showToast(
-          msg: 'Data Not Available',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 20.0
-      );
-    }else{
       setState(() {
         result;
       });
-    }
   }
 
 

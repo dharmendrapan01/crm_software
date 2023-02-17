@@ -2,13 +2,15 @@ import 'dart:convert';
 import 'package:crm_software/audioplayer_example.dart';
 import 'package:crm_software/modals/callrecord_modal.dart';
 import 'package:crm_software/modals/comment_modal.dart';
+import 'package:crm_software/reminder_page.dart';
 import 'package:crm_software/user_preference.dart';
+import 'package:crm_software/whatsapp_page.dart';
 import 'package:crm_software/widgets/header_section.dart';
-import 'package:crm_software/widgets/top_header.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'home_page.dart';
 import 'modals/leadview_modal.dart';
+import 'newlead_page.dart';
 
 class LeadView extends StatefulWidget {
   var leadId;
@@ -37,79 +39,105 @@ class _LeadViewState extends State<LeadView> {
 
   }
 
+  int _selectedIndex = 1;
+  void onItemTaped(int index){
+    setState(() {
+      _selectedIndex = index;
+      if(_selectedIndex == 1){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReminderPage()));
+      }else if(_selectedIndex == 2){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => WhatsappPage()));
+      }else if(_selectedIndex == 3){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewleadPage()));
+      }else{
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          TopHeader(),
-          HeaderSection(),
-          leadViewBody(),
-        ],
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.green),
+        elevation: 0,
+        toolbarHeight: 45.0,
+        backgroundColor: Colors.white,
+        flexibleSpace: SafeArea(
+          child: topHeaderBar(),
+        ),
       ),
+      body: Container(
+        // height: double.maxFinite,
+        // height: MediaQuery.of(context).size.height * 0.60,
+        child: ListView(
+          children: [
+            // TopHeader(),
+            HeaderSection(),
+            leadViewBody(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: bottomMenue(context),
     );
   }
 
-  leadViewBody() {
+  Container leadViewBody() {
     return Container(
+      // height: MediaQuery.of(context).size.height * 0.70,
       color: Colors.grey,
       child: Column(
         children: [
           Container(
-            width: double.infinity,
+            width: double.maxFinite,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius:
                   BorderRadius.vertical(bottom: Radius.elliptical(10.0, 10.0)),
             ),
-            height: 100,
-            child: ListView.builder(
-              itemCount: leadviewres.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Material(
-                      elevation: 10,
-                      borderRadius: BorderRadius.circular(50),
-                      shadowColor: Colors.black,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        radius: 30.0,
-                        child: CircleAvatar(
-                          radius: 27.0,
-                          backgroundColor: Colors.orange,
-                          child: Text(
-                            '${leadviewres[index].custName![0]}'.toUpperCase(),
-                            style: TextStyle(
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 10.0,
-                                  color: Colors.black,
-                                  offset: Offset(2.0, 2.0),
-                                ),
-                              ],
-                              color: Colors.white,
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
+            height: 92,
+            child: leadviewres.isEmpty ? Center(child: CircularProgressIndicator()): Column(
+              children: [
+                SizedBox(
+                  height: 5,
+                ),
+                Material(
+                  elevation: 10,
+                  borderRadius: BorderRadius.circular(50),
+                  shadowColor: Colors.black,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    radius: 30.0,
+                    child: CircleAvatar(
+                      radius: 27.0,
+                      backgroundColor: Colors.orange,
+                      child: Text(
+                        '${leadviewres[0].custName![0]}'.toUpperCase(),
+                        style: TextStyle(
+                          shadows: [
+                            Shadow(
+                              blurRadius: 10.0,
+                              color: Colors.black,
+                              offset: Offset(2.0, 2.0),
                             ),
-                          ),
+                          ],
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      '${leadviewres[index].custName}',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                    ),
-                  ],
-                );
-              },
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  '${leadviewres[0].custName}',
+                  style:
+                  TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
           ),
 
@@ -174,50 +202,63 @@ class _LeadViewState extends State<LeadView> {
           SizedBox(height: 10,),
 
           Container(
-            height: 250,
+            height: 210,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.elliptical(10.0, 10.0)),
             ),
             child: recordings.isEmpty ? Center(child: CircularProgressIndicator()) : ListView.builder(
+              padding: EdgeInsets.zero,
               itemCount: recordings.length,
               itemBuilder: (context, index) {
-                return Card(
-                  elevation: 2,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: (recordings[index].calldirection == 'clicktocall' || recordings[index].calldirection == 'callbroadcast') && recordings[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (recordings[index].calldirection == 'clicktocall' || recordings[index].calldirection == 'callbroadcast') && recordings[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : recordings[index].calldirection == 'inbound' && recordings[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
-                        title: recordings[index].calldirection == 'clicktocall' || recordings[index].calldirection == 'callbroadcast' ? Text('Outgoing: ${recordings[index].callduration}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),) : Text('Incoming: ${recordings[index].callduration}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text('${recordings[index].calldate},  ${recordings[index].callednumber}', style: TextStyle(color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        trailing: IconButton(
-                          onPressed: (){
-                            showModalBottomSheet(
-                              // enableDrag: false,
-                              // isDismissible: true,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                if(recordings[index].leadid!.isNotEmpty){
+                  return Card(
+                    elevation: 2,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: (recordings[index].calldirection == 'clicktocall' || recordings[index].calldirection == 'callbroadcast') && recordings[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (recordings[index].calldirection == 'clicktocall' || recordings[index].calldirection == 'callbroadcast') && recordings[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : recordings[index].calldirection == 'inbound' && recordings[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
+                          title: recordings[index].calldirection == 'clicktocall' || recordings[index].calldirection == 'callbroadcast' ? Text('Outgoing: ${recordings[index].callduration}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),) : Text('Incoming: ${recordings[index].callduration}', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 5,
                               ),
-                              context: context,
-                              builder: (context) => AudioExample(audioUrl: recordings[index].audiourl.toString()),
-                            );
-                          },
-                          icon: Icon(Icons.play_arrow_rounded, size: 40.0, color: Colors.black,),
+                              Text('${recordings[index].calldate},  ${recordings[index].callednumber}', style: TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                          trailing: IconButton(
+                            onPressed: (){
+                              showModalBottomSheet(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                ),
+                                context: context,
+                                builder: (context) => AudioExample(audioUrl: recordings[index].audiourl.toString()),
+                              );
+                            },
+                            icon: Icon(Icons.play_arrow_rounded, size: 40.0, color: Colors.black,),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }else{
+                  return Container(
+                    height: 100,
+                    child: SizedBox(
+                      height: 20,
+                      child: Center(
+                        child: Text(
+                          'Recordings Not Available', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.red),
                         ),
                       ),
-                    ],
-                  ),
-                );
+                    ),
+                  );
+                }
               },
             ),
           ),
@@ -225,29 +266,46 @@ class _LeadViewState extends State<LeadView> {
           SizedBox(height: 10,),
 
           Container(
-            height: 250,
+            height: 210,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.all(Radius.elliptical(10.0, 10.0)),
             ),
             child: comments.isEmpty ? Center(child: CircularProgressIndicator()) : ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
               itemCount: comments.length,
               itemBuilder: (context, index) {
-                return Card(
-                  elevation: 2,
-                  child: ListTile(
-                    title: Text(
-                      '${comments[index].calldate}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16.0),
+                if(comments[index].comment!.isNotEmpty){
+                  return Card(
+                    elevation: 2,
+                    child: ListTile(
+                      title: Text(
+                        '${comments[index].calldate}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16.0),
+                      ),
+                      subtitle: Text(
+                        '${comments[index].comment}',
+                        style: TextStyle(fontSize: 15.0, color: Colors.black),
+                      ),
                     ),
-                    subtitle: Text(
-                      '${comments[index].comment}',
-                      style: TextStyle(fontSize: 15.0, color: Colors.black),
+                  );
+                }else{
+                  return Container(
+                    height: 100,
+                    child: SizedBox(
+                      height: 20,
+                      child: Center(
+                        child: Text(
+                          'Comments Not Available', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500, color: Colors.red),
+                        ),
+                      ),
                     ),
-                  ),
-                );
+                  );
+                }
               },
             ),
           ),
@@ -288,20 +346,9 @@ class _LeadViewState extends State<LeadView> {
         headers: headersData);
     RecordingModal recordingModal = RecordingModal.fromJson(jsonDecode(response.body));
     recordings = recordings + recordingModal.audiodata!;
-    if(recordings.isEmpty){
-      Fluttertoast.showToast(
-          msg: 'Data Not Available',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 20.0
-      );
-    }else{
       setState(() {
         recordings;
       });
-    }
   }
 
 
@@ -316,20 +363,72 @@ class _LeadViewState extends State<LeadView> {
         headers: headersData);
     CommentModal commentModal = CommentModal.fromJson(jsonDecode(response.body));
     comments = comments + commentModal.commentdata!;
-    if(comments.isEmpty){
-      Fluttertoast.showToast(
-          msg: 'Data Not Available',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-          fontSize: 20.0
-      );
-    }else{
       setState(() {
         comments;
       });
-    }
+  }
+
+
+  Container topHeaderBar() {
+    return Container(
+      color: Colors.black,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(width: 40,),
+          Image.asset('assets/images/salesapp.png', width: 100),
+          Padding(
+            padding: const EdgeInsets.only(right: 3.0),
+            child: ElevatedButton(
+              onPressed: () {},
+              child: Row(
+                children: [
+                  Text('Live Call'.toUpperCase(),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+                  SizedBox(width: 3,),
+                  Icon(Icons.call),
+                ],
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget bottomMenue(BuildContext context) {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.black12,
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.orange,
+      unselectedItemColor: Colors.green,
+      showUnselectedLabels: true,
+      elevation: 0,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home, color: Colors.black,),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.business, color: Colors.black,),
+          label: 'Business',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.school, color: Colors.black,),
+          label: 'School',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings, color: Colors.black,),
+          label: 'Setting',
+        ),
+      ],
+      onTap: onItemTaped,
+    );
   }
 
 

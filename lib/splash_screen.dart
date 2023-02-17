@@ -4,6 +4,8 @@ import 'package:crm_software/home_page.dart';
 import 'package:crm_software/main.dart';
 import 'package:flutter/material.dart';
 
+import 'landing_page.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -16,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     Timer(Duration(seconds: 2), () {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0),
+          context, MaterialPageRoute(builder: (context) => LandingPage(),
       ));
     });
     super.initState();

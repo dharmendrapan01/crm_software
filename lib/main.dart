@@ -49,9 +49,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SplashScreen(),
-      // body: userToken != '' ? HomePage(tabIndex: 0,) : LoginPage(),
+    return SafeArea(
+      child: Scaffold(
+        body: SplashScreen(),
+        // body: userToken != '' ? HomePage(tabIndex: 0,) : LoginPage(),
+      ),
     );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crm_software/user_preference.dart';
+import 'package:crm_software/widgets/lead_update.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -159,10 +160,20 @@ class _WebsiteRecCallState extends State<WebsiteRecCall> {
                             },
                             child: Image.asset('assets/images/view.png', width: 35, height: 35,),
                           ),
-                          Image.asset(
-                            'assets/images/plus.png',
-                            width: 35,
-                            height: 35,
+                          InkWell(
+                            onTap: (){
+                              showModalBottomSheet(
+                                enableDrag: false,
+                                isDismissible: false,
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                ),
+                                context: context,
+                                builder: (context) => LeadUpdate(leadId: result[index].leadId),
+                              );
+                            },
+                            child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
                           ),
                           InkWell(
                             onTap: () {

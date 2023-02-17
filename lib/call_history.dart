@@ -4,6 +4,7 @@ import 'package:crm_software/lead_view.dart';
 import 'package:crm_software/modals/cli_number.dart';
 import 'package:crm_software/home_page.dart';
 import 'package:crm_software/user_preference.dart';
+import 'package:crm_software/widgets/lead_update.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -78,131 +79,140 @@ class _AllCallHistoryState extends State<AllCallHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-          height: 600,
-          child: result.isEmpty ? Center(child: CircularProgressIndicator()) : RefreshIndicator(
-            onRefresh: () {
-              // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (a,b,c) => MyHomePage(tabIndex: 1,)));
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 0,)), (Route<dynamic> route) => false);
-              return Future.value(false);
-            },
-            child: ListView.builder(
-              controller: scrollController,
-              physics: BouncingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: loading ? result.length +1 : result.length,
-              itemBuilder: (context, index) {
-                if(index < result.length){
-                  return Card(
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    margin: EdgeInsets.symmetric(vertical: 5),
-                    child: Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            showModalBottomSheet(
-                              enableDrag: false,
-                              isDismissible: false,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              context: context,
-                              builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
-                            );
-                            // clickToCall(result[index].mobileno, result[index].agentmobile, result[index].leadId, result[index].callerid);
-                          },
-                          child: ListTile(
-                            leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
-                            title: Text(
-                              '${result[index].custName}  (${result[index].leadId})',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
+        height: double.maxFinite,
+        child: result.isEmpty ? Center(child: CircularProgressIndicator()) : RefreshIndicator(
+          onRefresh: () {
+            // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (a,b,c) => MyHomePage(tabIndex: 1,)));
+            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 0,)), (Route<dynamic> route) => false);
+            return Future.value(false);
+          },
+          child: ListView.builder(
+            controller: scrollController,
+            physics: BouncingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: loading ? result.length +1 : result.length,
+            itemBuilder: (context, index) {
+              if(index < result.length){
+                return Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  margin: EdgeInsets.symmetric(vertical: 5),
+                  child: Column(
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                            enableDrag: false,
+                            isDismissible: false,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                             ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // SizedBox(
-                                //   height: 5,
-                                // ),
-                                Text('${result[index].mdate}  ${result[index].project}', maxLines: 1,
-                                  style: TextStyle(
-                                      color: Colors.black),
-                                ),
-                                // SizedBox(height: 5,),
-                                Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
-                                // SizedBox(
-                                //   height: 5,
-                                // ),
-                                Text(
-                                  '${result[index].agent}  ${result[index].leadQuality}',
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      color: Colors.black),
-                                ),
-                              ],
-                            ),
-                            trailing: Icon(Icons.more_vert, color: Colors.black,),
+                            context: context,
+                            builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
+                          );
+                        },
+                        child: ListTile(
+                          leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
+                          title: Text(
+                            '${result[index].custName}  (${result[index].leadId})',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold),
                           ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // SizedBox(
+                              //   height: 5,
+                              // ),
+                              Text('${result[index].mdate}  ${result[index].project}', maxLines: 1,
+                                style: TextStyle(
+                                    color: Colors.black),
+                              ),
+                              // SizedBox(height: 5,),
+                              Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
+                              // SizedBox(
+                              //   height: 5,
+                              // ),
+                              Text(
+                                '${result[index].agent}  ${result[index].leadQuality}',
+                                maxLines: 1,
+                                style: TextStyle(
+                                    color: Colors.black),
+                              ),
+                            ],
+                          ),
+                          trailing: Icon(Icons.more_vert, color: Colors.black,),
                         ),
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                    context, MaterialPageRoute(
-                                    builder: (context) => LeadView(leadId: result[index].leadId),
+                      ),
+                      // SizedBox(
+                      //   height: 10,
+                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context, MaterialPageRoute(
+                                  builder: (context) => LeadView(leadId: result[index].leadId),
+                              ),
+                              );
+                            },
+                            child: Image.asset('assets/images/view.png', width: 35, height: 35,),
+                          ),
+                          InkWell(
+                            onTap: (){
+                              showModalBottomSheet(
+                                enableDrag: false,
+                                isDismissible: false,
+                                isScrollControlled: true,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                 ),
-                                );
+                                context: context,
+                                builder: (context) => LeadUpdate(leadId: result[index].leadId),
+                              );
+                            },
+                              child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              addFavorite(result[index].leadId, userToken);
                               },
-                              child: Image.asset('assets/images/view.png', width: 35, height: 35,),
-                            ),
-                            Image.asset(
-                              'assets/images/plus.png',
-                              width: 35,
-                              height: 35,
-                            ),
-                            InkWell(
-                              onTap: () {
-                                addFavorite(result[index].leadId, userToken);
-                                },
-                              child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
-                            ),
-                            Image.asset(
-                              'assets/images/lead-view.png',
-                              width: 35,
-                              height: 35,
-                            ),
-                            Image.asset(
-                              'assets/images/messages.png',
-                              width: 35,
-                              height: 35,
-                            ),
-                            Image.asset(
-                              'assets/images/whatsapp.png',
-                              width: 35,
-                              height: 35,
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                      ],
-                    ),
-                  );
-                }else{
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+                            child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
+                          ),
+                          Image.asset(
+                            'assets/images/lead-view.png',
+                            width: 35,
+                            height: 35,
+                          ),
+                          Image.asset(
+                            'assets/images/messages.png',
+                            width: 35,
+                            height: 35,
+                          ),
+                          Image.asset(
+                            'assets/images/whatsapp.png',
+                            width: 35,
+                            height: 35,
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                    ],
+                  ),
+                );
+              }else{
+                return Center(child: CircularProgressIndicator());
+              }
+            },
           ),
         ),
-      );
+        ),
+    );
     // );
   }
 

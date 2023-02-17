@@ -29,6 +29,12 @@ class _ClockPartState extends State<ClockPart> {
   }
 
   @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Text ('$formattedDate $formattedTime',
       style: TextStyle(fontSize: 16, color: Colors.white),);
