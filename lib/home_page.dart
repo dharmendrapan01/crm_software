@@ -1,5 +1,6 @@
 import 'package:crm_software/qualified_list.dart';
 import 'package:crm_software/reminder_page.dart';
+import 'package:crm_software/screen/menue_page.dart';
 import 'package:crm_software/sms_call.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/webmissed_call.dart';
@@ -35,16 +36,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {
       _selectedIndex = index;
       if(_selectedIndex == 1){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
       }else if(_selectedIndex == 2){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MenuePage()));
       }else if(_selectedIndex == 3){
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => WhatsappPage()));
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
       }else if(_selectedIndex == 4){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
-      }else{
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage()));
       }
     });
   }

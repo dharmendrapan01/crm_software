@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:crm_software/audioplayer_example.dart';
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/modals/callrecord_modal.dart';
 import 'package:crm_software/modals/comment_modal.dart';
 import 'package:crm_software/reminder_page.dart';
@@ -7,14 +8,15 @@ import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/whatsapp_page.dart';
 import 'package:crm_software/widgets/header_section.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'home_page.dart';
 import 'modals/leadview_modal.dart';
 import 'newlead_page.dart';
 
 class LeadView extends StatefulWidget {
-  var leadId;
-  LeadView({Key? key, required this.leadId}) : super(key: key);
+  final leadId;
+  const LeadView({Key? key, required this.leadId}) : super(key: key);
 
   @override
   State<LeadView> createState() => _LeadViewState();
@@ -39,18 +41,20 @@ class _LeadViewState extends State<LeadView> {
 
   }
 
-  int _selectedIndex = 1;
+  int _selectedIndex = -1;
   void onItemTaped(int index){
     setState(() {
       _selectedIndex = index;
-      if(_selectedIndex == 1){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReminderPage()));
+      if(_selectedIndex == 0){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+      }else if(_selectedIndex == 1){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
       }else if(_selectedIndex == 2){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => WhatsappPage()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
       }else if(_selectedIndex == 3){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewleadPage()));
-      }else{
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
+      }else if(_selectedIndex == 4){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage(tabIndex: 0)));
       }
     });
   }
@@ -323,7 +327,7 @@ class _LeadViewState extends State<LeadView> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/view_lead.php?lead_id=$leadId'),
+            '$apiRootUrl/view_lead.php?lead_id=$leadId'),
         headers: headersData);
     // print(response.body);
     LeadViewModal leadDataClass =
@@ -342,7 +346,7 @@ class _LeadViewState extends State<LeadView> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_call.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_call.php?lead_id=$leadId'),
         headers: headersData);
     RecordingModal recordingModal = RecordingModal.fromJson(jsonDecode(response.body));
     recordings = recordings + recordingModal.audiodata!;
@@ -359,7 +363,7 @@ class _LeadViewState extends State<LeadView> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_comment.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_comment.php?lead_id=$leadId'),
         headers: headersData);
     CommentModal commentModal = CommentModal.fromJson(jsonDecode(response.body));
     comments = comments + commentModal.commentdata!;
@@ -401,33 +405,40 @@ class _LeadViewState extends State<LeadView> {
 
 
   Widget bottomMenue(BuildContext context) {
-    return BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.black12,
-      currentIndex: _selectedIndex,
-      selectedItemColor: Colors.orange,
-      unselectedItemColor: Colors.green,
-      showUnselectedLabels: true,
-      elevation: 0,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: Colors.black,),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.business, color: Colors.black,),
-          label: 'Business',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.school, color: Colors.black,),
-          label: 'School',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings, color: Colors.black,),
-          label: 'Setting',
-        ),
-      ],
-      onTap: onItemTaped,
+    return ClipRRect(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.black12,
+        currentIndex: _selectedIndex == -1 ? 0 : _selectedIndex,
+        selectedItemColor: _selectedIndex == -1 ? Colors.grey : Colors.orange,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        elevation: 0,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.call, color: Colors.green,),
+            label: 'Calls',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_active_rounded, color: Colors.red,),
+            label: 'Reminder',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.black,),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green,),
+            label: 'Whatsapp',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.filter_alt, color: Colors.red,),
+            label: 'New Lead',
+          ),
+        ],
+        onTap: onItemTaped,
+      ),
     );
   }
 

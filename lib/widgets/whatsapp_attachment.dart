@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
@@ -271,7 +272,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
       color: Colors.grey.shade300,
       height: 400,
       child: focusedprojects.isEmpty ? Center(child: CircularProgressIndicator()) : GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 4,
             childAspectRatio: 3/2,
             crossAxisSpacing: 1,
@@ -287,7 +288,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
                   onTap: () {
                     sendAttachment(userToken, userId, widget.leadId, focusedprojects[index].projfolder);
                   },
-                  child: Image.network('https://spaze-salesapp.com/img/top-project/${focusedprojects[index].logoimage}'),
+                  child: Image.network('$rootUrl/img/top-project/${focusedprojects[index].logoimage}'),
                 ),
               ),
             );
@@ -304,7 +305,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
         onTap: () {
           sendAttachment(userToken, userId, widget.leadId, 'visiting');
         },
-          child: Image.network('https://spaze-salesapp.com/visiting/$userId/$userId.jpg'),
+          child: Image.network('$rootUrl/visiting/$userId/$userId.jpg'),
       ),
     );
   }
@@ -317,7 +318,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/whatsapp_tamplate.php?user_id=$userId&lead_id=$leadId'),
+            '$apiRootUrl/whatsapp_tamplate.php?user_id=$userId&lead_id=$leadId'),
         headers: headersData);
     WhatsappTamplate tamplateModal = WhatsappTamplate.fromJson(json.decode(response.body));
     whatsapptamplates = whatsapptamplates + tamplateModal.tamplatelist!;
@@ -333,7 +334,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/focused_project.php?user_id=$userId&lead_id=$leadId'),
+            '$apiRootUrl/focused_project.php?user_id=$userId&lead_id=$leadId'),
         headers: headersData);
     FocucedProject focucedProject = FocucedProject.fromJson(json.decode(response.body));
     focusedprojects = focusedprojects + focucedProject.focusedproject!;
@@ -349,7 +350,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/search_project.php'),
+            '$apiRootUrl/search_project.php'),
         headers: headersData);
     // print(response.body);
     ProjectListModal projectListModal = ProjectListModal.fromJson(jsonDecode(response.body));
@@ -383,7 +384,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/send_tamplate.php';
+    var apiUrl = '$apiRootUrl/send_tamplate.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "lead_id": leadId,
@@ -455,7 +456,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/send_attachment.php';
+    var apiUrl = '$apiRootUrl/send_attachment.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "lead_id": leadId,
@@ -527,7 +528,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/send_searchattachment.php';
+    var apiUrl = '$apiRootUrl/send_searchattachment.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "lead_id": leadId,
@@ -595,7 +596,7 @@ class _WhatsappAttachmentState extends State<WhatsappAttachment> {
       dio.options.connectTimeout = 20000;
       Response response;
 
-      var apiUrl = 'https://spaze-salesapp.com/app/_api/upload_attachment.php';
+      var apiUrl = '$apiRootUrl/upload_attachment.php';
       var url = Uri.parse(apiUrl);
       response = await dio.post(
         apiUrl,

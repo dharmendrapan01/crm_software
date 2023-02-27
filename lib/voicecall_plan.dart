@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield_new.dart';
 import 'package:flutter/material.dart';
@@ -229,7 +230,7 @@ class _VoiceCallPlanState extends State<VoiceCallPlan> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_update.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_update.php?lead_id=$leadId'),
         headers: headersData);
     UpdateLead leadUpdateData = UpdateLead.fromJson(jsonDecode(response.body));
     updateleaddata = updateleaddata + leadUpdateData.leadupdatepop!;
@@ -251,7 +252,7 @@ class _VoiceCallPlanState extends State<VoiceCallPlan> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/voicecall_plan.php';
+    var apiUrl = '$apiRootUrl/voicecall_plan.php';
     var url = Uri.parse(apiUrl);
 
     var data = {

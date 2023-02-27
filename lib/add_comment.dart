@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -148,7 +149,7 @@ class _AddCommentState extends State<AddComment> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_update.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_update.php?lead_id=$leadId'),
         headers: headersData);
     // print(response.body);
     UpdateLead leadUpdateData = UpdateLead.fromJson(jsonDecode(response.body));
@@ -171,7 +172,7 @@ class _AddCommentState extends State<AddComment> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/qualified_update.php';
+    var apiUrl = '$apiRootUrl/qualified_update.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "lead_id": leadId,

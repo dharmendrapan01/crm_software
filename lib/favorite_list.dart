@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/widgets/lead_update.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class _FavoriteListState extends State<FavoriteList> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/favorite-list.php?user_id=$userId&page_no=$page'),
+            '$apiRootUrl/favorite-list.php?user_id=$userId&page_no=$page'),
         headers: headersData);
     // print(response.body);
     User userClass = User.fromJson(json.decode(response.body));
@@ -294,7 +295,7 @@ class _FavoriteListState extends State<FavoriteList> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(Uri.parse('https://spaze-salesapp.com/app/_api/cli_number.php?user_id=$userId'), headers: headersData);
+    var response = await http.get(Uri.parse('$apiRootUrl/cli_number.php?user_id=$userId'), headers: headersData);
     // print(response);
     CliModal cliModalClass = CliModal.fromJson(json.decode(response.body));
     clinumber = clinumber + cliModalClass.clilist!;
@@ -313,7 +314,7 @@ class _FavoriteListState extends State<FavoriteList> {
     var reqParameter = {
       "lead_id": "$leadId"
     };
-    var response = await http.post(Uri.parse('https://spaze-salesapp.com/app/_api/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
+    var response = await http.post(Uri.parse('$apiRootUrl/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
     if(response.statusCode == 200){
       Fluttertoast.showToast(
           msg: 'Data updated Successfully',

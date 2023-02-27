@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/lead_view.dart';
 import 'package:crm_software/modals/cli_number.dart';
 import 'package:crm_software/home_page.dart';
@@ -48,7 +49,7 @@ class _AllCallHistoryState extends State<AllCallHistory> {
     };
     var response = await http.get(
       Uri.parse(
-          'https://spaze-salesapp.com/app/_api/callhistory.php?user_id=$userId&page_no=$page'),
+          '$apiRootUrl/callhistory.php?user_id=$userId&page_no=$page'),
       headers: headersData);
       User userClass = User.fromJson(json.decode(response.body));
       result = result + userClass.datalist!;
@@ -295,7 +296,7 @@ class _AllCallHistoryState extends State<AllCallHistory> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(Uri.parse('https://spaze-salesapp.com/app/_api/cli_number.php?user_id=$userId'), headers: headersData);
+    var response = await http.get(Uri.parse('$apiRootUrl/cli_number.php?user_id=$userId'), headers: headersData);
     // print(response);
     CliModal cliModalClass = CliModal.fromJson(json.decode(response.body));
     clinumber = clinumber + cliModalClass.clilist!;
@@ -314,7 +315,7 @@ class _AllCallHistoryState extends State<AllCallHistory> {
     var reqParameter = {
       "lead_id": "$leadId"
     };
-    var response = await http.post(Uri.parse('https://spaze-salesapp.com/app/_api/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
+    var response = await http.post(Uri.parse('$apiRootUrl/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
     if(response.statusCode == 200){
       Fluttertoast.showToast(
           msg: 'Data updated Successfully',

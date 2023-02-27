@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield_new.dart';
 import 'package:flutter/material.dart';
@@ -408,7 +409,7 @@ class _MeetingPlanState extends State<MeetingPlan> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/search_project.php'),
+            '$apiRootUrl/search_project.php'),
         headers: headersData);
     // print(response.body);
     ProjectListModal projectListModal = ProjectListModal.fromJson(jsonDecode(response.body));
@@ -428,7 +429,7 @@ class _MeetingPlanState extends State<MeetingPlan> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_update.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_update.php?lead_id=$leadId'),
         headers: headersData);
     UpdateLead leadUpdateData = UpdateLead.fromJson(jsonDecode(response.body));
     updateleaddata = updateleaddata + leadUpdateData.leadupdatepop!;
@@ -451,7 +452,7 @@ class _MeetingPlanState extends State<MeetingPlan> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/add_meeting.php';
+    var apiUrl = '$apiRootUrl/add_meeting.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "lead_id": leadId,

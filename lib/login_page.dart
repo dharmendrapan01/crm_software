@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -199,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
           return const Center(child: CircularProgressIndicator());
         }
     );
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/login_api.php';
+    var apiUrl = '$apiRootUrl/login_api.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "login_id": emailText.text,

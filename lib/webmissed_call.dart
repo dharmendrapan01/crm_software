@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/widgets/lead_update.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'lead_view.dart';
 import 'modals/callhistory_modal.dart';
 import 'modals/cli_number.dart';
 import 'home_page.dart';
-import 'main.dart';
 
 class WebMissedCall extends StatefulWidget {
   const WebMissedCall({Key? key}) : super(key: key);
@@ -46,7 +46,7 @@ class _WebMissedCallState extends State<WebMissedCall> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/webmissed_call.php?user_id=$userId&page_no=$page'),
+            '$apiRootUrl/webmissed_call.php?user_id=$userId&page_no=$page'),
         headers: headersData);
     User userClass = User.fromJson(json.decode(response.body));
     result = result + userClass.datalist!;
@@ -290,7 +290,7 @@ class _WebMissedCallState extends State<WebMissedCall> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(Uri.parse('https://spaze-salesapp.com/app/_api/cli_number.php?user_id=$userId'), headers: headersData);
+    var response = await http.get(Uri.parse('$apiRootUrl/cli_number.php?user_id=$userId'), headers: headersData);
     // print(response);
     CliModal cliModalClass = CliModal.fromJson(json.decode(response.body));
     clinumber = clinumber + cliModalClass.clilist!;
@@ -308,7 +308,7 @@ class _WebMissedCallState extends State<WebMissedCall> {
     var reqParameter = {
       "lead_id": "$leadId"
     };
-    var response = await http.post(Uri.parse('https://spaze-salesapp.com/app/_api/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
+    var response = await http.post(Uri.parse('$apiRootUrl/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
     if(response.statusCode == 200){
       Fluttertoast.showToast(
           msg: 'Data updated Successfully',

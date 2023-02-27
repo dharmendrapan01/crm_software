@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/search_screen.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/widgets/lead_update.dart';
@@ -190,7 +191,7 @@ class _SearchBodyState extends State<SearchBody> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/search-lead.php?user_id=$userId&lead_id=$searchValue&search_box=$searchBox'),
+            '$apiRootUrl/search-lead.php?user_id=$userId&lead_id=$searchValue&search_box=$searchBox'),
         headers: headersData);
     Search userClass = Search.fromJson(json.decode(response.body));
     result = result + userClass.datalist!;
@@ -208,7 +209,7 @@ class _SearchBodyState extends State<SearchBody> {
     var reqParameter = {
       "lead_id": "$leadId"
     };
-    var response = await http.post(Uri.parse('https://spaze-salesapp.com/app/_api/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
+    var response = await http.post(Uri.parse('$apiRootUrl/add_favorite.php'), headers: headersData, body: jsonEncode(reqParameter));
     if(response.statusCode == 200){
       Fluttertoast.showToast(
           msg: 'Data updated Successfully',
@@ -270,7 +271,7 @@ class _SearchBodyState extends State<SearchBody> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(Uri.parse('https://spaze-salesapp.com/app/_api/cli_number.php?user_id=$userId'), headers: headersData);
+    var response = await http.get(Uri.parse('$apiRootUrl/cli_number.php?user_id=$userId'), headers: headersData);
     // print(response);
     CliModal cliModalClass = CliModal.fromJson(json.decode(response.body));
     clinumber = clinumber + cliModalClass.clilist!;

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/widgets/download_dialog.dart';
 import 'package:crm_software/widgets/googlemap_screen.dart';
@@ -131,6 +132,7 @@ class _WhatsappChatState extends State<WhatsappChat> {
                                   padding: const EdgeInsets.all(8),
                                   child: whatsappchats[index].whtype == 'text' ? Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    // mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
                                         '${whatsappchats[index].whtext}',
@@ -138,9 +140,11 @@ class _WhatsappChatState extends State<WhatsappChat> {
                                       ),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
+                                        crossAxisAlignment: CrossAxisAlignment.end,
                                         // mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text('${whatsappchats[index].createdate}', style: TextStyle(color: Colors.blue)),
+
                                           whatsappchats[index].whdirection == 'outgoing' ? SizedBox(width: 5,) : SizedBox(width: 0,),
                                           whatsappchats[index].whdirection == 'outgoing' ? whatsappchats[index].whStatus == '25' ? Icon(Icons.done, color: Colors.grey, size: 20,) : whatsappchats[index].whStatus == '0' ? Icon(Icons.done_all, color: Colors.grey, size: 20,) : whatsappchats[index].whStatus == '26' ? Icon(Icons.done_all, color: Colors.blue, size: 20,) : Icon(Icons.done, color: Colors.grey, size: 20,) : SizedBox(width: 0,),
                                         ],
@@ -280,6 +284,7 @@ class _WhatsappChatState extends State<WhatsappChat> {
                     }
                 ),
             ),
+
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -435,7 +440,7 @@ class _WhatsappChatState extends State<WhatsappChat> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/send_textmsg.php';
+    var apiUrl = '$apiRootUrl/send_textmsg.php';
     var url = Uri.parse(apiUrl);
     var data = {
       "lead_id": leadId,
@@ -497,7 +502,7 @@ class _WhatsappChatState extends State<WhatsappChat> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/whatsapp_chat.php?lead_id=$leadId'),
+            '$apiRootUrl/whatsapp_chat.php?lead_id=$leadId'),
         headers: headersData);
     WhatsappchatModal chatModal = WhatsappchatModal.fromJson(json.decode(response.body));
     whatsappchats = whatsappchats + chatModal.whatsappchat!;

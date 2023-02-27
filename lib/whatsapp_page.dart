@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/reminder_page.dart';
+import 'package:crm_software/screen/menue_page.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/whatsapp_chat.dart';
 import 'package:crm_software/widgets/my_drawer.dart';
@@ -8,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'home_page.dart';
 import 'modals/whatsapp_modal.dart';
+import 'newlead_page.dart';
 
 class WhatsappPage extends StatefulWidget {
   const WhatsappPage({Key? key}) : super(key: key);
@@ -29,16 +32,14 @@ class _WhatsappPageState extends State<WhatsappPage> {
   void onItemTaped(int index){
     setState(() {
       _selectedIndex = index;
-      if(_selectedIndex == 1){
+      if(_selectedIndex == 0){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+      }else if(_selectedIndex == 1){
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage()));
       }else if(_selectedIndex == 2){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
-      }else if(_selectedIndex == 3){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MenuePage()));
       }else if(_selectedIndex == 4){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
-      }else{
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage()));
       }
     });
   }
@@ -86,15 +87,16 @@ class _WhatsappPageState extends State<WhatsappPage> {
   Widget _buildSearchBox() {
     return Container(
       margin: EdgeInsets.only(top: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: Colors.blue,
-          width: 1,
-        ),
-      ),
+      // decoration: BoxDecoration(
+      //   borderRadius: BorderRadius.circular(30),
+      //   border: Border.all(
+      //     color: Colors.blue,
+      //     width: 1,
+      //   ),
+      // ),
       child: TextField(
         controller: controller,
+        style: TextStyle(color: Colors.black, fontSize: 16.0,),
         decoration: InputDecoration(
           prefixIcon: Icon(Icons.search, color: Colors.green,),
           suffixIcon: IconButton(
@@ -105,7 +107,10 @@ class _WhatsappPageState extends State<WhatsappPage> {
             },
           ),
           hintText: 'Search',
-          border: InputBorder.none,
+          contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+          ),
         ),
         onChanged: onSearchTextChanged,
       ),
@@ -210,7 +215,7 @@ class _WhatsappPageState extends State<WhatsappPage> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/whatsapp_home.php?user_id=$userId&page_no=$page'),
+            '$apiRootUrl/whatsapp_home.php?user_id=$userId&page_no=$page'),
         headers: headersData);
     WhatsappModal userClass = WhatsappModal.fromJson(json.decode(response.body));
     whatsapplist = whatsapplist + userClass.whatsapplist!;

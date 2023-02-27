@@ -1,0 +1,29 @@
+{
+	"items": [
+	  {
+			"id": "1",
+			"name": "Admin",
+			"menu_icon": "e3c6"
+		},
+		{
+			"id": "2",
+			"name": "Dashboard",
+			"menu_icon": "f3bd"
+		},
+		{
+			"id": "3",
+			"name": "Report",
+			"menu_icon": "e241"
+		},
+		{
+			"id": "4",
+			"name": "All Enq.",
+			"menu_icon": "e241"
+		},
+		{
+			"id": "5",
+			"name": "Fresh Enq.",
+			"menu_icon": "e4c4"
+		}
+	]
+}

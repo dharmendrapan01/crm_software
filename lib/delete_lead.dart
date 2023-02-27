@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -485,7 +486,7 @@ class _DeleteLeadState extends State<DeleteLead> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_update.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_update.php?lead_id=$leadId'),
         headers: headersData);
     UpdateLead leadUpdateData = UpdateLead.fromJson(jsonDecode(response.body));
     updateleaddata = updateleaddata + leadUpdateData.leadupdatepop!;
@@ -506,7 +507,7 @@ class _DeleteLeadState extends State<DeleteLead> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/delete_lead.php';
+    var apiUrl = '$apiRootUrl/delete_lead.php';
     var url = Uri.parse(apiUrl);
 
     var data = {

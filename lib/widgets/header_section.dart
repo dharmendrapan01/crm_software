@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../home_page.dart';
 import '../search_screen.dart';
 import '../user_preference.dart';
 import 'clock_widget.dart';

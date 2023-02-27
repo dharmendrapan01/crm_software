@@ -1,42 +1,26 @@
-import 'dart:convert';
-
-import 'package:crm_software/reminder_page.dart';
-import 'package:crm_software/screen/menue_page.dart';
-import 'package:crm_software/screen/microsite_lead.dart';
-import 'package:crm_software/screen/smsinbound_lead.dart';
-import 'package:crm_software/screen/websitecall_lead.dart';
-import 'package:crm_software/screen/whatsapp_lead.dart';
-import 'package:crm_software/user_preference.dart';
-import 'package:crm_software/whatsapp_page.dart';
-import 'package:crm_software/widgets/header_section.dart';
-import 'package:crm_software/widgets/my_drawer.dart';
+import 'package:crm_software/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'gloabal_variable.dart';
-import 'home_page.dart';
 
-class NewleadPage extends StatefulWidget {
+import '../call_history.dart';
+import '../newlead_page.dart';
+import '../reminder_page.dart';
+import '../whatsapp_page.dart';
+import '../widgets/header_section.dart';
+import '../widgets/my_drawer.dart';
+import 'all_enquiry_lead.dart';
+import 'menue_page.dart';
+
+class AllenquiryLead extends StatefulWidget {
   final tabIndex;
-  final tabDate;
-  const NewleadPage({Key? key, this.tabIndex, this.tabDate}) : super(key: key);
+  const AllenquiryLead({Key? key, this.tabIndex}) : super(key: key);
 
   @override
-  State<NewleadPage> createState() => _NewleadPageState();
+  State<AllenquiryLead> createState() => _AllenquiryLeadState();
 }
 
-class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin {
-  String? userToken = '';
-  String? userId = '';
-  TextEditingController searchdate = TextEditingController();
-  String curreDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
-  String micrositecount = '0';
-  String smsinboundcount = '0';
-  String websitecallcount = '0';
-  String whatsappcount = '0';
-
-  int _selectedIndex = 4;
+class _AllenquiryLeadState extends State<AllenquiryLead> with TickerProviderStateMixin {
+  int _selectedIndex = -1;
   void onItemTaped(int index){
     setState(() {
       _selectedIndex = index;
@@ -48,17 +32,10 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MenuePage()));
       }else if(_selectedIndex == 3){
         Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
+      }else if(_selectedIndex == 4){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage()));
       }
     });
-  }
-
-  @override
-  void initState() {
-    widget.tabDate != null ? searchdate.text = widget.tabDate : searchdate.text = curreDate;
-    userId = UserPreference.getUserId() ?? '';
-    userToken = UserPreference.getUserToken() ?? '';
-    getCountVal(userToken, userId, searchdate.text);
-    super.initState();
   }
 
   @override
@@ -69,6 +46,7 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
         elevation: 0,
         toolbarHeight: 45.0,
         backgroundColor: Colors.white,
+        // leadingWidth: 2.0,
         flexibleSpace: SafeArea(
           child: topHeaderBar(),
         ),
@@ -86,6 +64,7 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
       bottomNavigationBar: bottomMenue(context),
     );
   }
+
 
   Container topHeaderBar() {
     return Container(
@@ -117,6 +96,7 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
     );
   }
 
+
   Container bodySection(tabIndex) {
     TabController _tabController = TabController(
         length: 4, initialIndex: tabIndex == null ? tabIndex = 0 : tabIndex = tabIndex, vsync: this
@@ -125,42 +105,7 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
       height: MediaQuery.of(context).size.height * 0.81,
       child: Column(
         children: [
-          SizedBox(height: 5,),
-
-          Container(
-            height: 40,
-            child: TextField(
-              readOnly: true,
-              controller: searchdate,
-              style: TextStyle(color: Colors.black, fontSize: 16.0,),
-              decoration: InputDecoration(
-                suffixIcon: Icon(Icons.calendar_today, color: Colors.orange,),
-                contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-                hintText: 'Search by date',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                ),
-              ),
-
-              onTap: () async {
-                DateTime? pickedDate =  await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2100)
-                );
-                if(pickedDate != null){
-                  String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-                  searchdate.text = formattedDate;
-                  setState(() {
-                    getCountVal(userToken, userId, searchdate.text);
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage(tabDate: searchdate.text)));
-                  });
-                }
-              },
-            ),
-          ),
-
+          // SizedBox(height: 5,),
           Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12)
@@ -180,10 +125,10 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
                 isScrollable: true,
                 labelPadding: EdgeInsets.symmetric(horizontal: 20),
                 tabs: [
-                  Tab(child: Text('Microsite ${micrositecount}', style: TextStyle(color: Colors.black),),),
-                  Tab(child: Text('SMS Inbound ${smsinboundcount}', style: TextStyle(color: Colors.black),),),
-                  Tab(child: Text('Website Call ${websitecallcount}', style: TextStyle(color: Colors.black),),),
-                  Tab(child: Text('Whatsapp ${whatsappcount}', style: TextStyle(color: Colors.black),),),
+                  Tab(child: Text('All Enq', style: TextStyle(color: Colors.black),),),
+                  Tab(child: Text('Modified Enq', style: TextStyle(color: Colors.black),),),
+                  Tab(child: Text('Not Mod Enq', style: TextStyle(color: Colors.black),),),
+                  Tab(child: Text('Qualified Lead', style: TextStyle(color: Colors.black),),),
                 ],
               ),
             ),
@@ -192,10 +137,10 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
             child: TabBarView(
               controller: _tabController,
               children: [
-                MicrositeLead(searchDate: searchdate.text),
-                SmsinboundLead(searchDate: searchdate.text),
-                WebsiteCallLead(searchDate: searchdate.text),
-                WhatsappLead(searchDate: searchdate.text),
+                AllEnqLead(),
+                AllCallHistory(),
+                AllCallHistory(),
+                AllCallHistory(),
               ],
             ),
           ),
@@ -204,14 +149,15 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
     );
   }
 
+
   Widget bottomMenue(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.black12,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
+        currentIndex: _selectedIndex == -1 ? 0 : _selectedIndex,
+        selectedItemColor: _selectedIndex == -1 ? Colors.grey : Colors.orange,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         elevation: 0,
@@ -240,25 +186,6 @@ class _NewleadPageState extends State<NewleadPage> with TickerProviderStateMixin
         onTap: onItemTaped,
       ),
     );
-  }
-
-
-  void getCountVal(userToken, userId, searchDate) async {
-    var headersData = {
-      "Content-type": "application/json",
-      "Authorization": "Bearer $userToken"
-    };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/newleadcount.php?user_id=$userId&search_date=$searchDate'),
-        headers: headersData);
-    var responseArr = jsonDecode(response.body);
-    setState(() {
-      micrositecount = responseArr['micrositecount'];
-      smsinboundcount = responseArr['smsinboundcount'];
-      websitecallcount = responseArr['websitecallcount'];
-      whatsappcount = responseArr['whatsappcount'];
-    });
   }
 
 }

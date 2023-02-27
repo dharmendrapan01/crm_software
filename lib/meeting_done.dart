@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crm_software/gloabal_variable.dart';
 import 'package:crm_software/modals/user_modal.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:datetime_picker_formfield_new/datetime_picker_formfield_new.dart';
@@ -447,7 +448,7 @@ class _MeetingDoneState extends State<MeetingDone> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/lead_update.php?lead_id=$leadId'),
+            '$apiRootUrl/lead_update.php?lead_id=$leadId'),
         headers: headersData);
     UpdateLead leadUpdateData = UpdateLead.fromJson(jsonDecode(response.body));
     updateleaddata = updateleaddata + leadUpdateData.leadupdatepop!;
@@ -469,7 +470,7 @@ class _MeetingDoneState extends State<MeetingDone> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/search_project.php'),
+            '$apiRootUrl/search_project.php'),
         headers: headersData);
     // print(response.body);
     ProjectListModal projectListModal = ProjectListModal.fromJson(jsonDecode(response.body));
@@ -489,7 +490,7 @@ class _MeetingDoneState extends State<MeetingDone> {
     };
     var response = await http.get(
         Uri.parse(
-            'https://spaze-salesapp.com/app/_api/user-list.php'),
+            '$apiRootUrl/user-list.php'),
         headers: headersData);
     UserModalClass userModalClass = UserModalClass.fromJson(jsonDecode(response.body));
     users = users + userModalClass.userlist!;
@@ -507,7 +508,7 @@ class _MeetingDoneState extends State<MeetingDone> {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var apiUrl = 'https://spaze-salesapp.com/app/_api/meeting_done.php';
+    var apiUrl = '$apiRootUrl/meeting_done.php';
     var url = Uri.parse(apiUrl);
 
     var data = {

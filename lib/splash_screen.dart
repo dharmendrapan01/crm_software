@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:crm_software/home_page.dart';
-import 'package:crm_software/main.dart';
 import 'package:flutter/material.dart';
 
 import 'landing_page.dart';

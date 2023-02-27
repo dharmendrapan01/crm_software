@@ -1,8 +1,12 @@
+import 'package:crm_software/reminder_page.dart';
 import 'package:crm_software/search_body.dart';
+import 'package:crm_software/whatsapp_page.dart';
 import 'package:crm_software/widgets/header_section.dart';
 import 'package:crm_software/widgets/my_drawer.dart';
-import 'package:crm_software/widgets/top_header.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'home_page.dart';
 
 class SearchPage extends StatefulWidget {
   String searchValue;
@@ -14,6 +18,24 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
+  int _selectedIndex = -1;
+  void onItemTaped(int index){
+    setState(() {
+      _selectedIndex = index;
+      if(_selectedIndex == 0){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+      }else if(_selectedIndex == 1){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
+      }else if(_selectedIndex == 2){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+      }else if(_selectedIndex == 3){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
+      }else if(_selectedIndex == 4){
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,51 +111,40 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
 
 
   Widget bottomMenue(BuildContext context) {
-    int _selectedIndex = 0;
-    TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-    List<Widget> _widgetOptions = <Widget>[
-      Text(
-        'Index 0: Home',
-        style: optionStyle,
+    return ClipRRect(
+      borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.black12,
+        currentIndex: _selectedIndex == -1 ? 0 : _selectedIndex,
+        selectedItemColor: _selectedIndex == -1 ? Colors.grey : Colors.orange,
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        elevation: 0,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.call, color: Colors.green,),
+            label: 'Calls',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_active_rounded, color: Colors.red,),
+            label: 'Reminder',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home, color: Colors.black,),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green,),
+            label: 'Whatsapp',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.filter_alt, color: Colors.red,),
+            label: 'New Lead',
+          ),
+        ],
+        onTap: onItemTaped,
       ),
-      Text(
-        'Index 1: Business',
-        style: optionStyle,
-      ),
-      Text(
-        'Index 2: School',
-        style: optionStyle,
-      ),
-      Text(
-        'Index 3: Setting',
-        style: optionStyle,
-      ),
-    ];
-
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: Colors.black,),
-          label: 'Home',
-          backgroundColor: Colors.grey,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: Colors.black,),
-          label: 'Business',
-          backgroundColor: Colors.grey,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: Colors.black,),
-          label: 'School',
-          backgroundColor: Colors.grey,
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home, color: Colors.black,),
-          label: 'Setting',
-          backgroundColor: Colors.grey,
-        ),
-      ],
     );
   }
 
