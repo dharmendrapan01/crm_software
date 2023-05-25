@@ -6,7 +6,6 @@ import 'package:crm_software/modals/cli_number.dart';
 import 'package:crm_software/home_page.dart';
 import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/widgets/lead_update.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -24,7 +23,7 @@ class _AllCallHistoryState extends State<AllCallHistory> {
   List<Clilist> clinumber = [];
   ScrollController scrollController = ScrollController();
   bool loading = true;
-  int page = 1;
+  int pageno = 1;
   String? userToken = '';
   String? userId = '';
 
@@ -34,32 +33,69 @@ class _AllCallHistoryState extends State<AllCallHistory> {
     fetchNextPage();
     userId = UserPreference.getUserId() ?? '';
     userToken = UserPreference.getUserToken() ?? '';
-    getData(userToken, userId, page);
+    getData(userToken, userId, pageno);
     setState(() {
       getCLI(userId, userToken);
     });
   }
 
 
+  // Future getData(userToken, userId, paraPage) async {
+  //   // print(loading);
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //     Uri.parse(
+  //         '$apiRootUrl/callhistory.php?user_id=$userId&page_no=$page'),
+  //     headers: headersData);
+  //     User userClass = User.fromJson(json.decode(response.body));
+  //     result = result + userClass.datalist!;
+  //     int localPage = page + 1;
+  //     setState(() {
+  //       result;
+  //       loading = false;
+  //       page = localPage;
+  //     });
+  // }
+
+
+
   Future getData(userToken, userId, paraPage) async {
-    // print(loading);
+    // print(switchUserId);
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-      Uri.parse(
-          '$apiRootUrl/callhistory.php?user_id=$userId&page_no=$page'),
-      headers: headersData);
-      User userClass = User.fromJson(json.decode(response.body));
-      result = result + userClass.datalist!;
-      // print(result);
-      int localPage = page + 1;
-      setState(() {
-        result;
-        loading = false;
-        page = localPage;
-      });
+    var apiUrl = '$apiRootUrl/callhistory.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": pageno,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    // print(data);
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
+    // var responseArr = jsonDecode(response.body);
+    // print(responseArr);return;
+    User userClass = User.fromJson(json.decode(response.body));
+    result = result + userClass.datalist!;
+    int localPage = pageno + 1;
+    setState(() {
+      result;
+      loading = false;
+      pageno = localPage;
+    });
   }
 
 
@@ -67,7 +103,7 @@ class _AllCallHistoryState extends State<AllCallHistory> {
     scrollController.addListener(() async {
       if(loading) return;
       if(scrollController.position.maxScrollExtent == scrollController.position.pixels) {
-        getData(userToken, userId, page);
+        getData(userToken, userId, pageno);
         setState(() {
           loading = true;
         });
@@ -83,7 +119,6 @@ class _AllCallHistoryState extends State<AllCallHistory> {
         height: double.maxFinite,
         child: result.isEmpty ? Center(child: CircularProgressIndicator()) : RefreshIndicator(
           onRefresh: () {
-            // Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (a,b,c) => MyHomePage(tabIndex: 1,)));
             Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => HomePage(tabIndex: 0,)), (Route<dynamic> route) => false);
             return Future.value(false);
           },
@@ -94,118 +129,122 @@ class _AllCallHistoryState extends State<AllCallHistory> {
             itemCount: loading ? result.length +1 : result.length,
             itemBuilder: (context, index) {
               if(index < result.length){
-                return Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            enableDrag: false,
-                            isDismissible: false,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                if(result[index].leadId!.isNotEmpty){
+                  return Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              enableDrag: false,
+                              isDismissible: false,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                              ),
+                              context: context,
+                              builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
+                            );
+                          },
+                          child: ListTile(
+                            leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
+                            title: Text(
+                              '${result[index].custName}  (${result[index].leadId})',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
                             ),
-                            context: context,
-                            builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
-                          );
-                        },
-                        child: ListTile(
-                          leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
-                          title: Text(
-                            '${result[index].custName}  (${result[index].leadId})',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                Text('${result[index].mdate}  ${result[index].project}', maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black),
+                                ),
+                                // SizedBox(height: 5,),
+                                Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                Text(
+                                  '${result[index].agent}  ${result[index].leadQuality}',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            trailing: Icon(Icons.more_vert, color: Colors.black,),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              Text('${result[index].mdate}  ${result[index].project}', maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.black),
-                              ),
-                              // SizedBox(height: 5,),
-                              Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              Text(
-                                '${result[index].agent}  ${result[index].leadQuality}',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          trailing: Icon(Icons.more_vert, color: Colors.black,),
                         ),
-                      ),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
                                   context, MaterialPageRoute(
                                   builder: (context) => LeadView(leadId: result[index].leadId),
-                              ),
-                              );
-                            },
-                            child: Image.asset('assets/images/view.png', width: 35, height: 35,),
-                          ),
-                          InkWell(
-                            onTap: (){
-                              showModalBottomSheet(
-                                enableDrag: false,
-                                isDismissible: false,
-                                isScrollControlled: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                                 ),
-                                context: context,
-                                builder: (context) => LeadUpdate(leadId: result[index].leadId),
-                              );
-                            },
-                              child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              addFavorite(result[index].leadId, userToken);
+                                );
                               },
-                            child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
-                          ),
-                          Image.asset(
-                            'assets/images/lead-view.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          Image.asset(
-                            'assets/images/messages.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          Image.asset(
-                            'assets/images/whatsapp.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  ),
-                );
+                              child: Image.asset('assets/images/view.png', width: 35, height: 35,),
+                            ),
+                            InkWell(
+                              onTap: (){
+                                showModalBottomSheet(
+                                  enableDrag: false,
+                                  isDismissible: false,
+                                  isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  context: context,
+                                  builder: (context) => LeadUpdate(leadId: result[index].leadId),
+                                );
+                              },
+                              child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                addFavorite(result[index].leadId, userToken);
+                              },
+                              child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
+                            ),
+                            Image.asset(
+                              'assets/images/lead-view.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                            Image.asset(
+                              'assets/images/messages.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                            Image.asset(
+                              'assets/images/whatsapp.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                  );
+                }else{
+                  return Center(child: Text('Data Not Available', style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),));
+                }
               }else{
                 return Center(child: CircularProgressIndicator());
               }

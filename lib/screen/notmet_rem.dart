@@ -5,7 +5,6 @@ import 'package:crm_software/user_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../lead_view.dart';
 import '../modals/meeting_plan_rem_modal.dart';
@@ -177,22 +176,59 @@ class _NotMetRemState extends State<NotMetRem> {
     );
   }
 
-  void getNotMetData(userToken, userId, paraPage, planDate) async {
+  // void getNotMetData(userToken, userId, paraPage, planDate) async {
+  //   notmetdata.clear();
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/notmet_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
+  //       headers: headersData);
+  //   MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
+  //   notmetdata = notmetdata + meetingPlanRemModal.meetinglist!;
+  //   setState(() {
+  //     notmetdata;
+  //   });
+  // }
+
+
+  Future getNotMetData(userToken, userId, paraPage, planDate) async {
     notmetdata.clear();
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/notmet_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
-        headers: headersData);
+    var apiUrl = '$apiRootUrl/notmet_rem.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "plan_date": planDate,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
     notmetdata = notmetdata + meetingPlanRemModal.meetinglist!;
+    int localPage = page + 1;
     setState(() {
       notmetdata;
+      loading = false;
+      page = localPage;
     });
   }
+
+
 
   void addFavorite(leadId, userToken) async {
     var headersData = {

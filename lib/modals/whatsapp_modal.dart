@@ -2,7 +2,7 @@ class WhatsappModal {
   int? startfrom;
   int? totalpage;
   String? totalrecord;
-  String? page;
+  int? page;
   int? numrecperpage;
   List<Whatsapplist>? whatsapplist;
 

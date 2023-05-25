@@ -7,7 +7,6 @@ import 'package:crm_software/widgets/googlemap_screen.dart';
 import 'package:crm_software/widgets/video_play.dart';
 import 'package:crm_software/widgets/whatsapp_attachment.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'audioplayer_example.dart';

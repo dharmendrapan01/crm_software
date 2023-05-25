@@ -4,7 +4,6 @@ import 'package:crm_software/gloabal_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../lead_view.dart';
 import '../modals/meeting_plan_rem_modal.dart';
@@ -50,36 +49,6 @@ class _MeetingDoneRemState extends State<MeetingDoneRem> {
   Widget _buildBody() {
     return Column(
       children: [
-        // TextField(
-        //   readOnly: true,
-        //   controller: meetdonedate,
-        //   style: TextStyle(color: Colors.black, fontSize: 16.0,),
-        //   decoration: InputDecoration(
-        //     suffixIcon: Icon(Icons.calendar_today, color: Colors.orange,),
-        //     contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-        //     hintText: 'Search by date',
-        //     border: OutlineInputBorder(
-        //       borderRadius: BorderRadius.all(Radius.circular(8)),
-        //     ),
-        //   ),
-        //
-        //   onTap: () async {
-        //     DateTime? pickedDate =  await showDatePicker(
-        //         context: context,
-        //         initialDate: DateTime.now(),
-        //         firstDate: DateTime(1900),
-        //         lastDate: DateTime(2100)
-        //     );
-        //     if(pickedDate != null){
-        //       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-        //       meetdonedate.text = formattedDate;
-        //       setState(() {
-        //         getMeetingDoneData(userToken, userId, page, meetdonedate.text);
-        //       });
-        //     }
-        //   },
-        // ),
-
         SizedBox(height: 5,),
 
         Expanded(
@@ -185,22 +154,59 @@ class _MeetingDoneRemState extends State<MeetingDoneRem> {
     );
   }
 
-  void getMeetingDoneData(userToken, userId, paraPage, planDate) async {
+  // void getMeetingDoneData(userToken, userId, paraPage, planDate) async {
+  //   meetdonedata.clear();
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/meetingdone_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
+  //       headers: headersData);
+  //   MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
+  //   meetdonedata = meetdonedata + meetingPlanRemModal.meetinglist!;
+  //   setState(() {
+  //     meetdonedata;
+  //   });
+  // }
+
+
+  Future getMeetingDoneData(userToken, userId, paraPage, planDate) async {
     meetdonedata.clear();
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/meetingdone_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
-        headers: headersData);
+    var apiUrl = '$apiRootUrl/meetingdone_rem.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "plan_date": planDate,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
     meetdonedata = meetdonedata + meetingPlanRemModal.meetinglist!;
+    int localPage = page + 1;
     setState(() {
       meetdonedata;
+      loading = false;
+      page = localPage;
     });
   }
+
+
 
   void addFavorite(leadId, userToken) async {
     var headersData = {

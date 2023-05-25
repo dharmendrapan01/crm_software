@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../gloabal_variable.dart';
 import '../lead_view.dart';
@@ -181,25 +180,60 @@ class _SmsinboundLeadState extends State<SmsinboundLead> {
   }
 
 
-  void getSmsInboundData(userToken, userId, paraPage, searchDate) async {
+  // void getSmsInboundData(userToken, userId, paraPage, searchDate) async {
+  //   dataresult.clear();
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/smsinbound_lead.php?user_id=$userId&page_no=$page&search_date=$searchDate'),
+  //       headers: headersData);
+  //   // print(response.body);
+  //   NewleadModal newleadModal = NewleadModal.fromJson(json.decode(response.body));
+  //   dataresult = dataresult + newleadModal.newleadlist!;
+  //   // print(result);
+  //   // int localPage = page + 1;
+  //   setState(() {
+  //     dataresult;
+  //     // loading = false;
+  //     // page = localPage;
+  //   });
+  // }
+
+
+  Future getSmsInboundData(userToken, userId, paraPage, searchDate) async {
     dataresult.clear();
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/smsinbound_lead.php?user_id=$userId&page_no=$page&search_date=$searchDate'),
-        headers: headersData);
-    // print(response.body);
+    var apiUrl = '$apiRootUrl/smsinbound_lead.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "search_date": searchDate,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     NewleadModal newleadModal = NewleadModal.fromJson(json.decode(response.body));
     dataresult = dataresult + newleadModal.newleadlist!;
-    // print(result);
-    // int localPage = page + 1;
+    int localPage = page + 1;
     setState(() {
       dataresult;
       // loading = false;
-      // page = localPage;
+      page = localPage;
     });
   }
 

@@ -6,10 +6,11 @@ import 'package:crm_software/user_preference.dart';
 import 'package:crm_software/webmissed_call.dart';
 import 'package:crm_software/website_rec_call.dart';
 import 'package:crm_software/whatsapp_page.dart';
+import 'package:crm_software/widgets/bottom_menue.dart';
+import 'package:crm_software/widgets/header_first.dart';
 import 'package:crm_software/widgets/header_section.dart';
 import 'package:crm_software/widgets/my_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'call_history.dart';
 import 'favorite_list.dart';
 import 'newlead_page.dart';
@@ -57,7 +58,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         backgroundColor: Colors.white,
         // leadingWidth: 2.0,
         flexibleSpace: SafeArea(
-          child: topHeaderBar(),
+          child: HeaderFirst(),
         ),
       ),
       drawer: MyDrawer(),
@@ -71,7 +72,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ),
 
-      bottomNavigationBar: bottomMenue(context),
+      bottomNavigationBar: BottomMenu(selectedIndex: 0,),
     );
   }
 
@@ -128,76 +129,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-
-  Container topHeaderBar() {
-    return Container(
-      color: Colors.black,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 40,),
-          Image.asset('assets/images/salesapp.png', width: 100),
-          Padding(
-            padding: const EdgeInsets.only(right: 3.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Text('Live Call'.toUpperCase(),
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                  SizedBox(width: 3,),
-                  Icon(Icons.call),
-                ],
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-
-  Widget bottomMenue(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black12,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.call, color: Colors.green,),
-              label: 'Calls',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_active_rounded, color: Colors.red,),
-              label: 'Reminder',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.black,),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-              icon: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green,),
-              label: 'Whatsapp',
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.filter_alt, color: Colors.red,),
-              label: 'New Lead',
-          ),
-        ],
-        onTap: onItemTaped,
       ),
     );
   }

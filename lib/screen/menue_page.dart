@@ -4,17 +4,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import '../alldeleted_page.dart';
+import '../closerpipeline_page.dart';
+import '../data_enquiry_page.dart';
+import '../freshenquiry_page.dart';
 import '../gloabal_variable.dart';
+import '../meeting_page.dart';
+import '../miised_followup.dart';
 import '../modals/menupage_modal.dart';
 import '../newlead_page.dart';
+import '../nqdelete_page.dart';
+import '../old_enquiry_page.dart';
+import '../qualified_delete_page.dart';
+import '../qualified_page.dart';
 import '../reminder_page.dart';
+import '../sitevisit_page.dart';
+import '../status_unknwn_page.dart';
 import '../user_preference.dart';
+import '../verge_closer_page.dart';
 import '../whatsapp_page.dart';
+import '../widgets/bottom_menue.dart';
+import '../widgets/header_first.dart';
 import '../widgets/header_section.dart';
 import '../widgets/my_drawer.dart';
 import 'allenquiry_lead.dart';
 import 'dataenq_lead.dart';
-import 'freshenquiry_lead.dart';
 
 class MenuePage extends StatefulWidget {
   const MenuePage({Key? key}) : super(key: key);
@@ -37,21 +51,21 @@ class _MenuePageState extends State<MenuePage> {
     super.initState();
   }
 
-  int _selectedIndex = 2;
-  void onItemTaped(int index){
-    setState(() {
-      _selectedIndex = index;
-      if(_selectedIndex == 0){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
-      }else if(_selectedIndex == 1){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
-      }else if(_selectedIndex == 3){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
-      }else if(_selectedIndex == 4){
-        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage()));
-      }
-    });
-  }
+  // int _selectedIndex = 2;
+  // void onItemTaped(int index){
+  //   setState(() {
+  //     _selectedIndex = index;
+  //     if(_selectedIndex == 0){
+  //       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
+  //     }else if(_selectedIndex == 1){
+  //       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => ReminderPage(tabIndex: 0)));
+  //     }else if(_selectedIndex == 3){
+  //       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => WhatsappPage()));
+  //     }else if(_selectedIndex == 4){
+  //       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => NewleadPage()));
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +76,7 @@ class _MenuePageState extends State<MenuePage> {
         toolbarHeight: 45.0,
         backgroundColor: Colors.white,
         flexibleSpace: SafeArea(
-          child: topHeaderBar(),
+          child: HeaderFirst(),
         ),
       ),
       drawer: MyDrawer(),
@@ -77,39 +91,39 @@ class _MenuePageState extends State<MenuePage> {
       ],
     ),
       ),
-      bottomNavigationBar: bottomMenue(context),
+      bottomNavigationBar: BottomMenu(selectedIndex: 2,),
     );
   }
 
-  Container topHeaderBar() {
-    return Container(
-      color: Colors.black,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 40,),
-          Image.asset('assets/images/salesapp.png', width: 100),
-          Padding(
-            padding: const EdgeInsets.only(right: 3.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Text('Live Call'.toUpperCase(),
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                  SizedBox(width: 3,),
-                  Icon(Icons.call),
-                ],
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Container topHeaderBar() {
+  //   return Container(
+  //     color: Colors.black,
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         SizedBox(width: 40,),
+  //         Image.asset('assets/images/salesapp.png', width: 100),
+  //         Padding(
+  //           padding: const EdgeInsets.only(right: 3.0),
+  //           child: ElevatedButton(
+  //             onPressed: () {},
+  //             child: Row(
+  //               children: [
+  //                 Text('Live Call'.toUpperCase(),
+  //                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+  //                 SizedBox(width: 3,),
+  //                 Icon(Icons.call),
+  //               ],
+  //             ),
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.green,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget bodySection() {
     return _items.isEmpty ? Container(
@@ -160,43 +174,43 @@ class _MenuePageState extends State<MenuePage> {
     );
   }
 
-  Widget bottomMenue(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black12,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.call, color: Colors.green,),
-            label: 'Calls',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_active_rounded, color: Colors.red,),
-            label: 'Reminder',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: Colors.black,),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green,),
-            label: 'Whatsapp',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.filter_alt, color: Colors.red,),
-            label: 'New Lead',
-          ),
-        ],
-        onTap: onItemTaped,
-      ),
-    );
-  }
+  // Widget bottomMenue(BuildContext context) {
+  //   return ClipRRect(
+  //     borderRadius: BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
+  //     child: BottomNavigationBar(
+  //       type: BottomNavigationBarType.fixed,
+  //       backgroundColor: Colors.black12,
+  //       currentIndex: _selectedIndex,
+  //       selectedItemColor: Colors.orange,
+  //       unselectedItemColor: Colors.grey,
+  //       showUnselectedLabels: true,
+  //       elevation: 0,
+  //       items: [
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.call, color: Colors.green,),
+  //           label: 'Calls',
+  //         ),
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.notifications_active_rounded, color: Colors.red,),
+  //           label: 'Reminder',
+  //         ),
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.home, color: Colors.black,),
+  //           label: 'Home',
+  //         ),
+  //         BottomNavigationBarItem(
+  //           icon: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green,),
+  //           label: 'Whatsapp',
+  //         ),
+  //         BottomNavigationBarItem(
+  //           icon: Icon(Icons.filter_alt, color: Colors.red,),
+  //           label: 'New Lead',
+  //         ),
+  //       ],
+  //       onTap: onItemTaped,
+  //     ),
+  //   );
+  // }
 
 
   // Future<void> getMenueItem() async {
@@ -235,10 +249,52 @@ class _MenuePageState extends State<MenuePage> {
           return AllenquiryLead();
           break;
         case 'fresh_enquiry':
-          return FreshenqLead();
+          return FreshEnquiryPage();
+          break;
+        case 'data_enquiry':
+          return DataEnquiryPage();
+          break;
+        case 'old_enquiry':
+          return OldEnquiryPage();
+          break;
+        case 'qualified_page':
+          return QualifiedPage();
+          break;
+        case 'status_unkn':
+          return StatusUnknPage();
+          break;
+        case 'closer_pipeline':
+          return CloserPipeLinePage();
+          break;
+        case 'verge_closer':
+          return VergeCloserPage();
+          break;
+        case 'site_visit':
+          return SiteVisitPage();
+          break;
+        case 'qualified_delete':
+          return QualifiedDeletePage();
+          break;
+        case 'notqualify_delete':
+          return NotQualDeletePage();
+          break;
+        case 'deleted_enquiry':
+          return AllDeletedPage();
+          break;
+        case 'spam_delete':
+          return AllDeletedPage(tabIndex: 3,);
+          break;
+        case 'meeting_page':
+          return MeetingPage();
+          break;
+        case 'missed_followup':
+          return MissedFollowup();
+          break;
+        case 'whatsapp_page':
+          return WhatsappPage();
           break;
         default:
-          return DataenqLead();
+          return WhatsappPage();
       }
     }));
   }

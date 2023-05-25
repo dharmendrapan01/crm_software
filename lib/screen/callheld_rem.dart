@@ -4,7 +4,6 @@ import 'package:crm_software/gloabal_variable.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import '../lead_view.dart';
 import '../modals/meeting_plan_rem_modal.dart';
@@ -178,22 +177,59 @@ class _CallHeldRemState extends State<CallHeldRem> {
     );
   }
 
-  void getCallHeldData(userToken, userId, paraPage, planDate) async {
+  // void getCallHeldData(userToken, userId, paraPage, planDate) async {
+  //   callhelddata.clear();
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/callheld_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
+  //       headers: headersData);
+  //   MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
+  //   callhelddata = callhelddata + meetingPlanRemModal.meetinglist!;
+  //   setState(() {
+  //     callhelddata;
+  //   });
+  // }
+
+
+  Future getCallHeldData(userToken, userId, paraPage, planDate) async {
     callhelddata.clear();
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/callheld_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
-        headers: headersData);
+    var apiUrl = '$apiRootUrl/callheld_rem.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "plan_date": planDate,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
     callhelddata = callhelddata + meetingPlanRemModal.meetinglist!;
+    int localPage = page + 1;
     setState(() {
       callhelddata;
+      loading = false;
+      page = localPage;
     });
   }
+
+
 
   void addFavorite(leadId, userToken) async {
     var headersData = {

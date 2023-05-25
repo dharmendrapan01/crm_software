@@ -23,7 +23,7 @@ class _FavoriteListState extends State<FavoriteList> {
   List<Clilist> clinumber = [];
   ScrollController scrollController = ScrollController();
   bool loading = true;
-  int page = 1;
+  int pageno = 1;
   String? userToken = '';
   String? userId = '';
 
@@ -34,41 +34,83 @@ class _FavoriteListState extends State<FavoriteList> {
     userId = UserPreference.getUserId() ?? '';
     userToken = UserPreference.getUserToken() ?? '';
     setState(() {
-      getData(userToken, userId, page);
+      getData(userToken, userId, pageno);
       getCLI(userId, userToken);
     });
   }
 
-  void getData(userToken, userId, paraPage) async {
-    // print(userId);
-    // print(userToken);
+
+
+  Future getData(userToken, userId, paraPage) async {
+    // print(switchUserId);
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/favorite-list.php?user_id=$userId&page_no=$page'),
-        headers: headersData);
-    // print(response.body);
+    var apiUrl = '$apiRootUrl/favorite-list.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": pageno,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    // print(data);
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
+    // var responseArr = jsonDecode(response.body);
+    // print(responseArr);return;
     User userClass = User.fromJson(json.decode(response.body));
-    // print(userClass);
     result = result + userClass.datalist!;
-    // print(result);
-    int localPage = page + 1;
-    setState(() {
-      result;
-      loading = false;
-      page = localPage;
-    });
+    int localPage = pageno + 1;
+    if (this.mounted) {
+      setState(() {
+        result;
+        loading = false;
+        pageno = localPage;
+      });
+    }
   }
+
+
+
+  // void getData(userToken, userId, paraPage) async {
+  //   print(filterUsers);
+  //   // print(userToken);
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/favorite-list.php?user_id=$userId&page_no=$page&switch_user=$filterUsers'),
+  //       headers: headersData);
+  //   print(response.body);
+  //   User userClass = User.fromJson(json.decode(response.body));
+  //   // print(userClass);
+  //   result = result + userClass.datalist!;
+  //   // print(result);
+  //   int localPage = page + 1;
+  //   setState(() {
+  //     result;
+  //     loading = false;
+  //     page = localPage;
+  //   });
+  // }
 
 
   void fetchNextPage() {
     scrollController.addListener(() async {
       if(loading) return;
       if(scrollController.position.maxScrollExtent == scrollController.position.pixels) {
-        getData(userToken, userId, page);
+        getData(userToken, userId, pageno);
         setState(() {
           loading = true;
         });
@@ -95,124 +137,128 @@ class _FavoriteListState extends State<FavoriteList> {
             itemCount: loading ? result.length +1 : result.length,
             itemBuilder: (context, index) {
               if(index < result.length){
-                return Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            enableDrag: false,
-                            isDismissible: false,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                if(result[index].leadId!.isNotEmpty){
+                  return Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              enableDrag: false,
+                              isDismissible: false,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                              ),
+                              context: context,
+                              builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
+                            );
+                          },
+                          child: ListTile(
+                            leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
+                            title: Text(
+                              '${result[index].custName}  (${result[index].leadId})',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
                             ),
-                            context: context,
-                            builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
-                          );
-                        },
-                        child: ListTile(
-                          leading: (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'answered' ? Icon(Icons.call_made, color: Colors.green) : (result[index].direction == 'clicktocall' || result[index].direction == 'callbroadcast') && result[index].callstatus == 'missed' ? Icon(Icons.call_made, color: Colors.red) : result[index].direction == 'inbound' && result[index].callstatus == 'missed' ? Icon(Icons.call_received, color: Colors.red) : Icon(Icons.call_received, color: Colors.green),
-                          title: Text(
-                            '${result[index].custName}  (${result[index].leadId})',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              Text(
-                                '${result[index].mdate}  ${result[index].project}',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.black),
-                              ),
-                              // SizedBox(height: 5,),
-                              Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              Text(
-                                '${result[index].agent}  ${result[index].leadQuality}',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          trailing: Icon(Icons.more_vert, color: Colors.black,),
-                        ),
-                      ),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context, MaterialPageRoute(
-                                builder: (context) => LeadView(leadId: result[index].leadId),
-                              ),
-                              );
-                            },
-                            child: Image.asset('assets/images/view.png', width: 35, height: 35,),
-                          ),
-                          InkWell(
-                            onTap: (){
-                              showModalBottomSheet(
-                                enableDrag: false,
-                                isDismissible: false,
-                                isScrollControlled: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                Text(
+                                  '${result[index].mdate}  ${result[index].project}',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black),
                                 ),
-                                context: context,
-                                builder: (context) => LeadUpdate(leadId: result[index].leadId),
-                              );
-                            },
-                            child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
+                                // SizedBox(height: 5,),
+                                Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                Text(
+                                  '${result[index].agent}  ${result[index].leadQuality}',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            trailing: Icon(Icons.more_vert, color: Colors.black,),
                           ),
-                          InkWell(
-                            onTap: () {
-                              addFavorite(result[index].leadId, userToken);
-                            },
-                            child: Image.asset('assets/images/impclient-active.png', width: 35,height: 35),
-                          ),
-                          Image.asset(
-                            'assets/images/lead-view.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          Image.asset(
-                            'assets/images/messages.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          Image.asset(
-                            'assets/images/whatsapp.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  ),
-                );
-              }else{
-                return Center(child: CircularProgressIndicator());
-              }
-            },
+                        ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context, MaterialPageRoute(
+                                  builder: (context) => LeadView(leadId: result[index].leadId),
+                                ),
+                                );
+                              },
+                              child: Image.asset('assets/images/view.png', width: 35, height: 35,),
+                            ),
+                            InkWell(
+                              onTap: (){
+                                showModalBottomSheet(
+                                  enableDrag: false,
+                                  isDismissible: false,
+                                  isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  context: context,
+                                  builder: (context) => LeadUpdate(leadId: result[index].leadId),
+                                );
+                              },
+                              child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                addFavorite(result[index].leadId, userToken);
+                              },
+                              child: Image.asset('assets/images/impclient-active.png', width: 35,height: 35),
+                            ),
+                            Image.asset(
+                              'assets/images/lead-view.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                            Image.asset(
+                              'assets/images/messages.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                            Image.asset(
+                              'assets/images/whatsapp.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                  );
+                }else{
+                  return Center(child: Text('Data Not Available', style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),));
+                }
+                }else{
+                  return Center(child: CircularProgressIndicator());
+                }
+            }
           ),
         ),
       ),

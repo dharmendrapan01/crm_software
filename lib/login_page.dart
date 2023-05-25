@@ -28,41 +28,47 @@ class _LoginPageState extends State<LoginPage> {
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         key: _scaffoldkey,
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-                colors: [
-                  Colors.pink,
-                  Colors.pink
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.only(left: 5, right: 5),
-                height: 520,
-                width: double.infinity,
-                child: ListView(
-                  children: [
-                    headerSection(),
-                    textSection(),
-                    formSection(),
-                    buttonSection(),
-                    footerSection(),
+        body: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [
+                    Colors.pink,
+                    Colors.pink
                   ],
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  color: HexColor('#efefef'),
-                ),
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter
               ),
-            ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 5, right: 5),
+                  height: 520,
+                  width: double.infinity,
+                  child: ListView(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    children: [
+                      headerSection(),
+                      textSection(),
+                      formSection(),
+                      buttonSection(),
+                      footerSection(),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    color: HexColor('#efefef'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -201,6 +207,7 @@ class _LoginPageState extends State<LoginPage> {
         }
     );
     var apiUrl = '$apiRootUrl/login_api.php';
+    // print(apiUrl);
     var url = Uri.parse(apiUrl);
     var data = {
       "login_id": emailText.text,
@@ -219,6 +226,7 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200) {
       Navigator.pop(context);
       var loginDataArr = jsonDecode(response.body);
+      // print(loginDataArr);
       if(loginDataArr['lstatus'] == '1'){
         await UserPreference.setUserToken(loginDataArr['jwt']);
         await UserPreference.setUserId(loginDataArr['userId']);
@@ -236,14 +244,6 @@ class _LoginPageState extends State<LoginPage> {
             textColor: Colors.white,
             fontSize: 20.0
         );
-        // showDialog(
-        //   context: context,
-        //   builder: (context){
-        //     return AlertDialog(
-        //       content: Text('Wrong email or password'),
-        //     );
-        //   },
-        // );
       }
     } else {
       Fluttertoast.showToast(
@@ -254,15 +254,6 @@ class _LoginPageState extends State<LoginPage> {
           textColor: Colors.white,
           fontSize: 20.0
       );
-      // Navigator.pop(context);
-      // showDialog(
-      //   context: context,
-      //   builder: (context){
-      //     return AlertDialog(
-      //       content: Text('Incorrect api url'),
-      //     );
-      //   },
-      // );
     }
 
   }

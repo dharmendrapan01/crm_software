@@ -1,9 +1,24 @@
+import 'package:crm_software/data_enquiry_page.dart';
 import 'package:crm_software/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../alldeleted_page.dart';
+import '../closerpipeline_page.dart';
+import '../freshenquiry_page.dart';
 import '../login_page.dart';
+import '../meeting_page.dart';
+import '../miised_followup.dart';
+import '../nqdelete_page.dart';
+import '../qualified_delete_page.dart';
+import '../qualified_page.dart';
+import '../screen/allenquiry_lead.dart';
+import '../screen/menue_page.dart';
+import '../sitevisit_page.dart';
+import '../status_unknwn_page.dart';
 import '../user_preference.dart';
+import '../verge_closer_page.dart';
+import '../whatsapp_page.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({Key? key}) : super(key: key);
@@ -61,24 +76,26 @@ class _MyDrawerState extends State<MyDrawer> {
               leading: Icon(Icons.home, color: Colors.green, size: 30.0,),
               title: Text('Home', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
               onTap: (){
-                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage(tabIndex: 0)));
+                Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => MenuePage()));
               },
             ),
 
-            SizedBox(child: Container(height: 1.0, color: Colors.green,),),
+            // SizedBox(child: Container(height: 1.0, color: Colors.green,),),
 
-            ListTile(
-              leading: FaIcon(Icons.account_box, color: Colors.green, size: 30.0,),
-              title: Text('Admin', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
-            ),
+            // ListTile(
+            //   leading: FaIcon(Icons.account_box, color: Colors.green, size: 30.0,),
+            //   title: Text('Admin', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
+            //   onTap: (){},
+            // ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
 
             ListTile(
               leading: FaIcon(Icons.list, color: Colors.green, size: 30.0,),
               title: Text('All Enquiry', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AllenquiryLead(tabIndex: 0)));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -86,7 +103,19 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.library_books, color: Colors.green, size: 30.0,),
               title: Text('Fresh Enquiry', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => FreshEnquiryPage(tabIndex: 0)));
+              },
+            ),
+
+            SizedBox(child: Container(height: 1.0, color: Colors.green,),),
+
+            ListTile(
+              leading: FaIcon(Icons.event_note, color: Colors.green, size: 30.0,),
+              title: Text('Data Enquiry', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => DataEnquiryPage(tabIndex: 0)));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -94,7 +123,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.thumb_up, color: Colors.green, size: 30.0,),
               title: Text('Qualified', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => QualifiedPage(tabIndex: 0)));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -102,7 +133,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.question_mark, color: Colors.green, size: 30.0,),
               title: Text('Status Unknown', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => StatusUnknPage(tabIndex: 0)));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -110,7 +143,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.rule, color: Colors.green, size: 30.0,),
               title: Text('Closure Pipline', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => CloserPipeLinePage()));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -118,7 +153,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.credit_score, color: Colors.green, size: 30.0,),
               title: Text('Verge Of Closure', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => VergeCloserPage()));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -126,7 +163,39 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.people, color: Colors.green, size: 30.0,),
               title: Text('Site Visit', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SiteVisitPage(tabIndex: 0)));
+              },
+            ),
+
+            SizedBox(child: Container(height: 1.0, color: Colors.green,),),
+
+            ListTile(
+              leading: FaIcon(Icons.groups, color: Colors.green, size: 30.0,),
+              title: Text('Meeting', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MeetingPage(tabIndex: 0)));
+              },
+            ),
+
+            SizedBox(child: Container(height: 1.0, color: Colors.green,),),
+
+            ListTile(
+              leading: FaIcon(Icons.phone_missed, color: Colors.red, size: 30.0,),
+              title: Text('Missed Followup', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => MissedFollowup()));
+              },
+            ),
+
+            SizedBox(child: Container(height: 1.0, color: Colors.green,),),
+
+            ListTile(
+              leading: FaIcon(FontAwesomeIcons.whatsapp, color: Colors.green, size: 30.0,),
+              title: Text('Whatsapp', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => WhatsappPage()));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -134,7 +203,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.delete, color: Colors.green, size: 30.0,),
               title: Text('Qualified Delete', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => QualifiedDeletePage()));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -142,7 +213,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.delete_outline, color: Colors.green, size: 30.0,),
               title: Text('Not Qualify Delete', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => NotQualDeletePage()));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),
@@ -150,7 +223,9 @@ class _MyDrawerState extends State<MyDrawer> {
             ListTile(
               leading: FaIcon(Icons.delete_forever, color: Colors.green, size: 30.0,),
               title: Text('Delete', style: TextStyle(fontSize: 18.0, color: Colors.black54, fontWeight: FontWeight.bold),),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AllDeletedPage()));
+              },
             ),
 
             SizedBox(child: Container(height: 1.0, color: Colors.green,),),

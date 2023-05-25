@@ -51,36 +51,6 @@ class _MeetingPlanRemState extends State<MeetingPlanRem> {
   Widget _buildBody() {
     return Column(
       children: [
-        // TextField(
-        //   readOnly: true,
-        //   controller: meetingdate,
-        //   style: TextStyle(color: Colors.black, fontSize: 16.0,),
-        //   decoration: InputDecoration(
-        //     suffixIcon: Icon(Icons.calendar_today, color: Colors.orange,),
-        //     contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
-        //     hintText: 'Search by date',
-        //     border: OutlineInputBorder(
-        //       borderRadius: BorderRadius.all(Radius.circular(8)),
-        //     ),
-        //   ),
-        //
-        //   onTap: () async {
-        //     DateTime? pickedDate =  await showDatePicker(
-        //         context: context,
-        //         initialDate: DateTime.now(),
-        //         firstDate: DateTime(1900),
-        //         lastDate: DateTime(2100)
-        //     );
-        //     if(pickedDate != null){
-        //       String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate);
-        //       meetingdate.text = formattedDate;
-        //       setState(() {
-        //         getMeetingPlanData(userToken, userId, page, meetingdate.text);
-        //       });
-        //     }
-        //   },
-        // ),
-
         SizedBox(height: 5,),
 
         Expanded(
@@ -201,28 +171,63 @@ class _MeetingPlanRemState extends State<MeetingPlanRem> {
   }
 
 
-  void getMeetingPlanData(userToken, userId, paraPage, planDate) async {
-    // print(planDate);
-    // print(userToken);
+  // void getMeetingPlanData(userToken, userId, paraPage, planDate) async {
+  //   // print(planDate);
+  //   // print(userToken);
+  //   meetingplan.clear();
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/meeting_plan_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
+  //       headers: headersData);
+  //   // print(response.body);
+  //   MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
+  //   // print(userClass);
+  //   meetingplan = meetingplan + meetingPlanRemModal.meetinglist!;
+  //   // print(result);
+  //   // int localPage = page + 1;
+  //   setState(() {
+  //     meetingplan;
+  //     loading = false;
+  //     // page = localPage;
+  //   });
+  // }
+
+
+  Future getMeetingPlanData(userToken, userId, paraPage, planDate) async {
     meetingplan.clear();
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/meeting_plan_rem.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
-        headers: headersData);
-    // print(response.body);
+    var apiUrl = '$apiRootUrl/meeting_plan_rem.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "plan_date": planDate,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     MeetingPlanRemModal meetingPlanRemModal = MeetingPlanRemModal.fromJson(json.decode(response.body));
-    // print(userClass);
     meetingplan = meetingplan + meetingPlanRemModal.meetinglist!;
-    // print(result);
-    // int localPage = page + 1;
+    int localPage = page + 1;
     setState(() {
       meetingplan;
       loading = false;
-      // page = localPage;
+      page = localPage;
     });
   }
 

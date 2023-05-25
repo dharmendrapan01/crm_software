@@ -185,27 +185,63 @@ class _MicrositeLeadState extends State<MicrositeLead> {
   }
 
 
-  void getMicrositeData(userToken, userId, paraPage, planDate) async {
+  // void getMicrositeData(userToken, userId, paraPage, planDate) async {
+  //   micrositelead.clear();
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/microsite_lead.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
+  //       headers: headersData);
+  //   // print(response.body);
+  //   NewleadModal newleadModal = NewleadModal.fromJson(json.decode(response.body));
+  //   micrositelead = micrositelead + newleadModal.newleadlist!;
+  //   // print(result);
+  //   // int localPage = page + 1;
+  //   setState(() {
+  //     micrositelead;
+  //     loading = false;
+  //     // page = localPage;
+  //   });
+  // }
+
+
+  Future getMicrositeData(userToken, userId, paraPage, planDate) async {
     micrositelead.clear();
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/microsite_lead.php?user_id=$userId&page_no=$page&plan_date=$planDate'),
-        headers: headersData);
-    // print(response.body);
+    var apiUrl = '$apiRootUrl/microsite_lead.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "plan_date": planDate,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     NewleadModal newleadModal = NewleadModal.fromJson(json.decode(response.body));
     micrositelead = micrositelead + newleadModal.newleadlist!;
-    // print(result);
-    // int localPage = page + 1;
+    int localPage = page + 1;
     setState(() {
       micrositelead;
       loading = false;
-      // page = localPage;
+      page = localPage;
     });
   }
+
 
 
   void addFavorite(leadId, userToken) async {

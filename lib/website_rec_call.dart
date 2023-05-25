@@ -39,15 +39,47 @@ class _WebsiteRecCallState extends State<WebsiteRecCall> {
     });
   }
 
-  void getData(userToken, userId, paraPage) async {
+  // void getData(userToken, userId, paraPage) async {
+  //   var headersData = {
+  //     "Content-type": "application/json",
+  //     "Authorization": "Bearer $userToken"
+  //   };
+  //   var response = await http.get(
+  //       Uri.parse(
+  //           '$apiRootUrl/website_call.php?user_id=$userId&page_no=$page'),
+  //       headers: headersData);
+  //   User userClass = User.fromJson(json.decode(response.body));
+  //   result = result + userClass.datalist!;
+  //   int localPage = page + 1;
+  //   setState(() {
+  //     result;
+  //     loading = false;
+  //     page = localPage;
+  //   });
+  // }
+
+  Future getData(userToken, userId, paraPage) async {
     var headersData = {
       "Content-type": "application/json",
       "Authorization": "Bearer $userToken"
     };
-    var response = await http.get(
-        Uri.parse(
-            '$apiRootUrl/website_call.php?user_id=$userId&page_no=$page'),
-        headers: headersData);
+    var apiUrl = '$apiRootUrl/website_call.php';
+    var url = Uri.parse(apiUrl);
+
+    var data = {
+      "user_id": userId,
+      "page_no": page,
+      "switch_user": filterUsers,
+      "switch_source": filterSource,
+      "switch_child": filterParentChild,
+      "switch_leadtype": filterLeadType
+    };
+    var request = jsonEncode(data);
+    http.Response response = await http.post(
+        url,
+        body: request,
+        headers: headersData
+    );
     User userClass = User.fromJson(json.decode(response.body));
     result = result + userClass.datalist!;
     int localPage = page + 1;
@@ -90,123 +122,127 @@ class _WebsiteRecCallState extends State<WebsiteRecCall> {
             itemCount: loading ? result.length +1 : result.length,
             itemBuilder: (context, index) {
               if(index < result.length){
-                return Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          showModalBottomSheet(
-                            enableDrag: false,
-                            isDismissible: false,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                if(result[index].leadId!.isNotEmpty){
+                  return Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    child: Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                              enableDrag: false,
+                              isDismissible: false,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                              ),
+                              context: context,
+                              builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
+                            );
+                          },
+                          child: ListTile(
+                            leading: Icon(Icons.call_received, color: Colors.green),
+                            title: Text(
+                              '${result[index].custName}  (${result[index].leadId})',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold),
                             ),
-                            context: context,
-                            builder: (context) => cliSheet(result[index].mobileno, result[index].leadId),
-                          );
-                        },
-                        child: ListTile(
-                          leading: Icon(Icons.call_received, color: Colors.green),
-                          title: Text(
-                            '${result[index].custName}  (${result[index].leadId})',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              Text(
-                                '${result[index].mdate}  ${result[index].project}',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.black),
-                              ),
-                              // SizedBox(height: 5,),
-                              Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
-                              // SizedBox(
-                              //   height: 5,
-                              // ),
-                              Text(
-                                '${result[index].agent}  ${result[index].leadQuality}',
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          trailing: Icon(Icons.more_vert, color: Colors.black,),
-                        ),
-                      ),
-                      // SizedBox(
-                      //   height: 10,
-                      // ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              Navigator.push(
-                                context, MaterialPageRoute(
-                                builder: (context) => LeadView(leadId: result[index].leadId),
-                              ),
-                              );
-                            },
-                            child: Image.asset('assets/images/view.png', width: 35, height: 35,),
-                          ),
-                          InkWell(
-                            onTap: (){
-                              showModalBottomSheet(
-                                enableDrag: false,
-                                isDismissible: false,
-                                isScrollControlled: true,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                Text(
+                                  '${result[index].mdate}  ${result[index].project}',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black),
                                 ),
-                                context: context,
-                                builder: (context) => LeadUpdate(leadId: result[index].leadId),
-                              );
-                            },
-                            child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
+                                // SizedBox(height: 5,),
+                                Text('${result[index].nomasked}', style: TextStyle(color: Colors.black),),
+                                // SizedBox(
+                                //   height: 5,
+                                // ),
+                                Text(
+                                  '${result[index].agent}  ${result[index].leadQuality}',
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            trailing: Icon(Icons.more_vert, color: Colors.black,),
                           ),
-                          InkWell(
-                            onTap: () {
-                              addFavorite(result[index].leadId, userToken);
-                            },
-                            child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
-                          ),
-                          Image.asset(
-                            'assets/images/lead-view.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          Image.asset(
-                            'assets/images/messages.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                          Image.asset(
-                            'assets/images/whatsapp.png',
-                            width: 35,
-                            height: 35,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 5,
-                      ),
-                    ],
-                  ),
-                );
-              }else{
-                return Center(child: CircularProgressIndicator());
-              }
+                        ),
+                        // SizedBox(
+                        //   height: 10,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context, MaterialPageRoute(
+                                  builder: (context) => LeadView(leadId: result[index].leadId),
+                                ),
+                                );
+                              },
+                              child: Image.asset('assets/images/view.png', width: 35, height: 35,),
+                            ),
+                            InkWell(
+                              onTap: (){
+                                showModalBottomSheet(
+                                  enableDrag: false,
+                                  isDismissible: false,
+                                  isScrollControlled: true,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                                  ),
+                                  context: context,
+                                  builder: (context) => LeadUpdate(leadId: result[index].leadId),
+                                );
+                              },
+                              child: Image.asset('assets/images/plus.png', width: 35, height: 35,),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                addFavorite(result[index].leadId, userToken);
+                              },
+                              child: result[index].favorite == '1' ? Image.asset('assets/images/impclient-active.png', width: 35,height: 35) : Image.asset('assets/images/impclient.png', width: 35,height: 35),
+                            ),
+                            Image.asset(
+                              'assets/images/lead-view.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                            Image.asset(
+                              'assets/images/messages.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                            Image.asset(
+                              'assets/images/whatsapp.png',
+                              width: 35,
+                              height: 35,
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 5,
+                        ),
+                      ],
+                    ),
+                  );
+                }else{
+                  return Center(child: Text('Data Not Available', style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),));
+                }
+                }else{
+                  return Center(child: CircularProgressIndicator());
+                }
             },
           ),
         ),

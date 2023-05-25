@@ -1,6 +1,7 @@
 import 'package:crm_software/reminder_page.dart';
 import 'package:crm_software/search_body.dart';
 import 'package:crm_software/whatsapp_page.dart';
+import 'package:crm_software/widgets/header_first.dart';
 import 'package:crm_software/widgets/header_section.dart';
 import 'package:crm_software/widgets/my_drawer.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         toolbarHeight: 45.0,
         backgroundColor: Colors.white,
         flexibleSpace: SafeArea(
-          child: topHeaderBar(),
+          child: HeaderFirst(),
         ),
       ),
       drawer: MyDrawer(),
@@ -79,35 +80,35 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   }
 
 
-  Container topHeaderBar() {
-    return Container(
-      color: Colors.black,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 40,),
-          Image.asset('assets/images/salesapp.png', width: 100),
-          Padding(
-            padding: const EdgeInsets.only(right: 3.0),
-            child: ElevatedButton(
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Text('Live Call'.toUpperCase(),
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-                  SizedBox(width: 3,),
-                  Icon(Icons.call),
-                ],
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Container topHeaderBar() {
+  //   return Container(
+  //     color: Colors.black,
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         SizedBox(width: 40,),
+  //         Image.asset('assets/images/salesapp.png', width: 100),
+  //         Padding(
+  //           padding: const EdgeInsets.only(right: 3.0),
+  //           child: ElevatedButton(
+  //             onPressed: () {},
+  //             child: Row(
+  //               children: [
+  //                 Text('Live Call'.toUpperCase(),
+  //                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+  //                 SizedBox(width: 3,),
+  //                 Icon(Icons.call),
+  //               ],
+  //             ),
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.green,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
 
   Widget bottomMenue(BuildContext context) {

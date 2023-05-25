@@ -2,7 +2,7 @@ class NewleadModal {
   int? startfrom;
   int? totalpage;
   String? totalrecord;
-  String? page;
+  int? page;
   int? numrecperpage;
   List<Newleadlist>? newleadlist;
 

@@ -2,7 +2,7 @@ class EnquiryModal {
   int? startfrom;
   int? totalpage;
   String? totalrecord;
-  String? page;
+  int? page;
   int? numrecperpage;
   List<Enqlist>? enqlist;
 
@@ -68,7 +68,6 @@ class Enqlist {
   String? status;
   String? sourceid;
   String? ducount;
-  String? mobilereq;
   String? mobileC2c;
   String? favorite;
   String? agentmobile;
@@ -99,7 +98,6 @@ class Enqlist {
         this.status,
         this.sourceid,
         this.ducount,
-        this.mobilereq,
         this.mobileC2c,
         this.favorite,
         this.agentmobile
@@ -131,7 +129,6 @@ class Enqlist {
     status = json['status'];
     sourceid = json['sourceid'];
     ducount = json['ducount'];
-    mobilereq = json['mobilereq'];
     mobileC2c = json['mobile_c2c'];
     favorite = json['favorite'];
     agentmobile = json['agentmobile'];
@@ -164,7 +161,6 @@ class Enqlist {
     data['status'] = this.status;
     data['sourceid'] = this.sourceid;
     data['ducount'] = this.ducount;
-    data['mobilereq'] = this.mobilereq;
     data['mobile_c2c'] = this.mobileC2c;
     data['favorite'] = this.favorite;
     data['agentmobile'] = this.agentmobile;
